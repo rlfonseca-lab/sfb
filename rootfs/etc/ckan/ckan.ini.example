@@ -38,6 +38,22 @@
 debug = false
 
 [app:main]
+
+## SFB custom settings
+ckan.site_url = https://custom.ckan.bt2.dev.br
+ckan.plugins = activity scheming_datasets sfb_facets_multi sfb_geo_facet sfb_access sfb_group_sync sfbgroups sfb_drafts_search
+extra_template_paths = /etc/ckan/custom/templates
+extra_public_paths = /etc/ckan/custom/public, /etc/ckan/public
+ckan.locale_default = pt_BR
+ckan.locales_offered = pt_BR en
+ckan.locale_order = pt_BR en
+ckan.i18n.extra_directory = /opt/ckan/extra_translations
+ckan.i18n.extra_gettext_domain = sfb_ui
+ckan.i18n.extra_locales = pt_BR
+scheming.presets = ckanext.scheming:presets.json ckanext.scheming:scheming_presets_custom.json
+scheming.dataset_schemas = ckanext.scheming:/etc/ckan/schemas/sfb_dataset.yaml
+scheming.dataset_fallback = false
+ckanext.sfb_group_sync.fields = sfb_grupo,grupos,grupo,grupo_de_usuarios
 ckan.search.facets = organization groups tags res_format license_id extras_acesso extras_escopo extras_abrangencia extras_fonte extras_grupo_institucional extras_ccd extras_etiquetas extras_temas extras_projeto_nome extras_referencia_geo extras_sistema_relacionado extras_numero_sei extras_id_origem extras_doc_relacionado extras_doc_futuro extras_data_criacao extras_data_atualizacao extras_validade
 
 ## General settings ############################################################
@@ -76,7 +92,6 @@ sqlalchemy.pool_pre_ping = true
 # sqlalchemy.<OPTION> = 
 
 ## Site Settings ###############################################################
-ckan.site_url = https://ckan.bt2.dev.br
 apikey_header_name = X-CKAN-API-Key
 ckan.cache_expires = 0
 ckan.cache_enabled = false
@@ -166,13 +181,9 @@ ckan.cors.origin_allow_all = false
 ckan.cors.origin_whitelist = 
 
 ## Plugins Settings ############################################################
-ckan.plugins = activity scheming_datasets sfb_facets_multi sfb_geo_facet sfb_access sfb_group_sync sfbgroups sfb_drafts_search
 ckan.download_proxy = 
 
 # Presets padrão + presets custom
-scheming.presets = ckanext.scheming:presets.json ckanext.scheming:scheming_presets_custom.json
-scheming.dataset_schemas = ckanext.scheming:/etc/ckan/schemas/sfb_dataset.yaml
-scheming.dataset_fallback = false
 
 ## Front-End Settings ##########################################################
 ckan.site_title = CKAN
@@ -203,8 +214,6 @@ ckan.views.default_views = image_view datatables_view
 ckan.template_head_end = 
 ckan.template_footer_end = 
 ckan.template_title_delimiter = -
-extra_template_paths = /etc/ckan/custom/templates
-extra_public_paths = /etc/ckan/custom/public
 ckan.base_public_folder = public
 ckan.base_templates_folder = templates
 ckan.default.package_type = dataset
@@ -248,15 +257,9 @@ ckan.feeds.date =
 ckan.feeds.limit = 20
 
 ## Internationalisation Settings ###############################################
-ckan.locale_default = pt_BR
-ckan.locales_offered = pt_BR
 ckan.locales_filtered_out = 
-ckan.locale_order = pt_BR
 ckan.i18n_directory = /opt/ckan/i18n_override
 
-ckan.i18n.extra_directory =/opt/ckan/extra_translations
-ckan.i18n.extra_gettext_domain =sfb_ui
-ckan.i18n.extra_locales =pt_BR
 ckan.i18n.rtl_languages = he ar fa_IR
 ckan.i18n.rtl_theme = css/main-rtl
 ckan.display_timezone = UTC
@@ -326,4 +329,3 @@ format = %(asctime)s %(levelname)-5.5s [%(name)s] %(message)s
 ckan.extra_public_paths = /etc/ckan/custom/public
 
 ckan.extra_template_paths = /etc/ckan/custom/templates
-ckanext.sfb_group_sync.fields = sfb_grupo,grupos,grupo,grupo_de_usuarios

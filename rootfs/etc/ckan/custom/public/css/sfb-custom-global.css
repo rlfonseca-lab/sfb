@@ -1,0 +1,1083 @@
+/* ============================================
+   0) TOKENS (SFB + neutros SaaS)
+============================================ */
+:root{
+  --sfb-primary: #007235 !important;
+  --sfb-primary-2: #7fc241 !important;
+  --sfb-accent: #d79701 !important;
+  --sfb-accent-2: #d3751e !important;
+  --sfb-earth: #6f5000 !important;
+  --sfb-earth-2: #703400 !important;
+
+  --sfb-bg: #f7f6f2 !important;
+  --sfb-surface: #ffffff !important;
+  --sfb-surface-2: #fbfbfc !important;
+  --sfb-border: #e6e8eb !important;
+  --sfb-text: #1f2933 !important;
+  --sfb-muted: #6b7280 !important;
+  --sfb-link: #0b7a3b !important;
+
+  --sfb-radius: 14px !important;
+  --sfb-radius-sm: 10px !important;
+  --sfb-shadow: 0 10px 28px rgba(0,0,0,.08) !important;
+  --sfb-shadow-sm: 0 6px 18px rgba(0,0,0,.08) !important;
+
+  --sfb-font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif !important;
+
+  --sfb-deep-green: #0f3d22 !important;
+}
+
+/* ============================================
+   1) OCULTAR ELEMENTOS (feeds + tags)
+============================================ */
+div.module-feeds{
+  display: none !important;
+}
+div.tags{
+  display: none !important;
+}
+
+/* ============================================
+   2) BASE / TIPOGRAFIA / LINKS
+============================================ */
+html, body{
+  font-family: var(--sfb-font) !important;
+  color: var(--sfb-text) !important;
+  background: var(--sfb-bg) !important;
+}
+
+a{
+  color: var(--sfb-link) !important;
+  text-decoration: none !important;
+}
+a:hover{
+  color: var(--sfb-primary) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
+p, li, label, .control-label, .form-text{
+  color: var(--sfb-text) !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.page-heading, .module-heading, .media-heading{
+  letter-spacing: -0.01em !important;
+  color: var(--sfb-text) !important;
+}
+
+/* ============================================
+   3) LAYOUT GERAL (container + espaçamentos)
+============================================ */
+.container, .container-fluid{
+  padding-left: 22px !important;
+  padding-right: 22px !important;
+}
+
+/* Mantém respiro no miolo do site (exceto home, que você “achatou” no final) */
+body:not(.homepage) #content.container{
+  padding-top: 18px !important;
+}
+
+/* ============================================
+   4) BARRA SUPERIOR (account-masthead)
+   - verde do footer
+   - sem separadores
+   - hover branco
+============================================ */
+.account-masthead{
+  background: var(--sfb-deep-green) !important;
+  border-bottom: 0 !important;
+}
+
+.account-masthead .account ul,
+.account-masthead .account li{
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+.account-masthead .account li{
+  display: inline-block !important;
+}
+.account-masthead .account li::before,
+.account-masthead .account li::after{
+  content: none !important;
+  display: none !important;
+}
+
+.account-masthead .account a,
+.account-masthead .account li a{
+  color: rgba(255,255,255,.92) !important;
+  padding: 10px 12px !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+}
+.account-masthead .account a:hover,
+.account-masthead .account li a:hover{
+  color: #ffffff !important;
+  background: rgba(255,255,255,.12) !important;
+  border-radius: 10px !important;
+  text-decoration: none !important;
+}
+
+/* ============================================
+   5) NAVBAR (masthead)
+   - barra branca
+   - menu à esquerda
+   - itens sem quebrar linha
+   - estado ativo verde escuro
+   - busca arredondada
+============================================ */
+header.masthead{
+  background: #ffffff !important;
+  border-bottom: 1px solid var(--sfb-border) !important;
+}
+
+header.masthead .navbar{
+  padding-top: 14px !important;
+  padding-bottom: 14px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+header.masthead .navbar a{
+  color: var(--sfb-text) !important;
+}
+header.masthead .navbar a:hover{
+  color: var(--sfb-primary) !important;
+  text-decoration: none !important;
+}
+
+/* Logo: remover filtros de inversão do tema */
+a.logo > img{
+  filter: none !important;
+}
+
+/* Logo SFB/SNIF via background-image */
+a.logo{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+
+  background-image: url("https://snif.florestal.gov.br/images/img/sfb_logo.png") !important;
+  background-repeat: no-repeat !important;
+  background-position: left center !important;
+  background-size: contain !important;
+
+  min-width: 550px !important;
+  min-height: 115px !important;
+}
+
+/* Esconder <img> original do CKAN */
+a.logo > img{
+  opacity: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  position: absolute !important;
+}
+
+/* Botão hambúrguer */
+.navbar-toggler{
+  border: 1px solid var(--sfb-border) !important;
+  border-radius: var(--sfb-radius-sm) !important;
+  padding: 8px 10px !important;
+  background: #ffffff !important;
+}
+.navbar-toggler .fa-bars{
+  color: var(--sfb-text) !important;
+}
+
+/* Menu: alinhar à esquerda, em linha e sem quebra */
+.navbar-nav{
+  margin-left: 30px !important;
+  margin-right: 0 !important;
+
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+}
+.navbar-nav.ms-auto{
+  margin-left: 30px !important;
+}
+
+.navbar-nav > li > a{
+  padding: 10px 12px !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  color: var(--sfb-text) !important;
+
+  white-space: nowrap !important;
+}
+.navbar-nav > li > a span{
+  white-space: nowrap !important;
+}
+.navbar-nav > li > a:hover{
+  background: var(--sfb-surface-2) !important;
+  color: var(--sfb-primary) !important;
+}
+
+/* Menu ativo */
+header.masthead .navbar-nav > li.active > a,
+header.masthead .navbar-nav > li > a.active,
+header.masthead .navbar-nav > li > a[aria-current="page"],
+header.masthead .navbar-nav > li > a:focus{
+  background: var(--sfb-deep-green) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+}
+header.masthead .navbar-nav > li.active > a:hover,
+header.masthead .navbar-nav > li > a.active:hover,
+header.masthead .navbar-nav > li > a[aria-current="page"]:hover{
+  background: var(--sfb-deep-green) !important;
+  color: #ffffff !important;
+}
+
+/* Busca no header */
+.site-search{
+  margin-left: 12px !important;
+  gap: 8px !important;
+}
+.site-search .form-control{
+  border: 1px solid var(--sfb-border) !important;
+  border-radius: 999px !important;
+  padding: 10px 14px !important;
+  background: #ffffff !important;
+}
+.site-search .btn{
+  border-radius: 999px !important;
+  padding: 10px 12px !important;
+  background: var(--sfb-primary) !important;
+  border: 0 !important;
+  color: #ffffff !important;
+}
+.site-search .btn:hover{
+  background: var(--sfb-primary-2) !important;
+}
+
+/* ============================================
+   6) HOME / HERO (OpenAFRICA-like)
+   - cards brancos com sombra
+   - formulário avançado
+============================================ */
+.homepage .hero{
+  background-image: none !important;
+  background: transparent !important;
+  padding-top: 18px !important;
+  padding-bottom: 6px !important;
+}
+
+.homepage .module-promotion{
+  border-radius: var(--sfb-radius) !important;
+  box-shadow: var(--sfb-shadow) !important;
+  border: 1px solid var(--sfb-border) !important;
+  background: var(--sfb-surface) !important;
+  padding: 22px !important;
+}
+.homepage .module-promotion .page-heading{
+  font-size: 34px !important;
+  line-height: 1.15 !important;
+  margin-bottom: 10px !important;
+}
+.homepage .module-promotion p{
+  color: var(--sfb-muted) !important;
+  line-height: 1.6 !important;
+}
+
+/* Caixa da busca da home */
+.homepage .module-search{
+  border-radius: var(--sfb-radius) !important;
+  box-shadow: var(--sfb-shadow) !important;
+  border: 1px solid var(--sfb-border) !important;
+  background: var(--sfb-surface) !important;
+  padding: 22px !important;
+}
+.homepage .module-search .module-heading{
+  font-weight: 800 !important;
+  font-size: 18px !important;
+  margin-bottom: 12px !important;
+}
+.homepage .module-search label{
+  font-weight: 650 !important;
+  color: var(--sfb-text) !important;
+}
+
+/* Inputs do formulário da home */
+.homepage .module-search input[type="text"],
+.homepage .module-search input[type="date"],
+.homepage .module-search select{
+  border: 1px solid var(--sfb-border) !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  background: #ffffff !important;
+}
+.homepage .module-search input::placeholder{
+  color: #8a9099 !important;
+}
+
+/* Checkboxes */
+.homepage .module-search .checkbox{
+  margin: 6px 0 !important;
+}
+.homepage .module-search .checkbox input{
+  accent-color: var(--sfb-primary) !important;
+}
+
+/* Details */
+.homepage .module-search details{
+  border-top: 1px dashed var(--sfb-border) !important;
+  padding-top: 10px !important;
+  margin-top: 10px !important;
+}
+.homepage .module-search details > summary{
+  font-weight: 800 !important;
+  color: var(--sfb-primary) !important;
+}
+
+/* Botões da home */
+.homepage .module-search .btn,
+.homepage .module-search button.btn{
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+  border: 1px solid transparent !important;
+  font-weight: 700 !important;
+}
+.homepage .module-search .btn-primary{
+  background: var(--sfb-primary) !important;
+  color: #fff !important;
+}
+.homepage .module-search .btn-primary:hover{
+  background: var(--sfb-primary-2) !important;
+}
+.homepage .module-search .btn-default{
+  background: #ffffff !important;
+  border: 1px solid var(--sfb-border) !important;
+  color: var(--sfb-text) !important;
+}
+.homepage .module-search .btn-default:hover{
+  background: var(--sfb-surface-2) !important;
+}
+
+/* ============================================
+   7) CATÁLOGO (DATASETS)
+   Tarefa: visual “flat/clean” sem “cards” separados
+   - item externo transparente
+   - conteúdo interno branco e organizado
+============================================ */
+.dataset-list{
+  margin-top: 10px !important;
+}
+
+/* Remove “card externo” */
+.dataset-item,
+.dataset-list .dataset-item,
+.dataset-item.module-content{
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  margin-bottom: 10px !important;
+  padding: 10px 0 !important;
+}
+
+/* Mantém legibilidade em “bloco interno” */
+.dataset-content{
+  background: #ffffff !important;
+  border: 1px solid var(--sfb-border) !important;
+  border-radius: 12px !important;
+  padding: 14px 16px !important;
+  box-shadow: none !important;
+}
+
+.dataset-heading a{
+  color: var(--sfb-text) !important;
+  font-weight: 800 !important;
+}
+.dataset-heading a:hover{
+  color: var(--sfb-primary) !important;
+}
+
+.dataset-content .empty,
+.dataset-content p{
+  color: var(--sfb-muted) !important;
+}
+
+/* Badges/tags (se reativar depois) */
+.tag,
+.label,
+.badge{
+  border-radius: 999px !important;
+  padding: 6px 10px !important;
+  border: 1px solid var(--sfb-border) !important;
+  background: var(--sfb-surface-2) !important;
+  color: var(--sfb-text) !important;
+}
+
+/* ============================================
+   8) FACETS / SIDEBAR
+   Tarefa: remover divisórias e “caixas” da lateral
+============================================ */
+.module-narrow, .module-shallow{
+  border-radius: var(--sfb-radius) !important;
+}
+
+/* Remove qualquer “card” e linha da sidebar */
+.secondary,
+.secondary .module,
+.secondary .module .module-heading,
+.secondary .module .module-content,
+.secondary .facet-nav,
+.secondary .nav-facet{
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Conteúdo mais contínuo */
+.secondary .module .module-content{
+  padding: 0 !important;
+}
+
+/* Itens de facet como lista limpa */
+.module .nav-facet,
+.facet-nav{
+  padding: 10px 12px !important;
+}
+
+.nav-facet a,
+.facet-nav a{
+  color: var(--sfb-text) !important;
+  border-radius: 10px !important;
+  padding: 8px 10px !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  background: transparent !important;
+}
+.nav-facet a:hover,
+.facet-nav a:hover{
+  background: var(--sfb-surface-2) !important;
+  color: var(--sfb-primary) !important;
+}
+
+/* Remove linha entre coluna de facets e coluna de registros */
+.primary,
+.primary::before,
+.primary::after,
+.secondary::before,
+.secondary::after,
+.wrapper,
+.wrapper::before,
+.wrapper::after{
+  border-left: 0 !important;
+  border-right: 0 !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+/* ============================================
+   9) FORMULÁRIOS (GERAL) + BOTÕES (GERAL)
+============================================ */
+.form-control, input, select, textarea{
+  border: 1px solid var(--sfb-border) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+.form-control:focus, input:focus, select:focus, textarea:focus{
+  border-color: var(--sfb-primary) !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 4px rgba(0,114,53,.12) !important;
+}
+
+/* Botões */
+.btn{
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  padding: 10px 14px !important;
+}
+.btn-primary{
+  background: var(--sfb-primary) !important;
+  border: 0 !important;
+  color: #fff !important;
+}
+.btn-primary:hover{
+  background: var(--sfb-primary-2) !important;
+}
+.btn-default, .btn-secondary{
+  background: #ffffff !important;
+  border: 1px solid var(--sfb-border) !important;
+  color: var(--sfb-text) !important;
+}
+.btn-default:hover, .btn-secondary:hover{
+  background: var(--sfb-surface-2) !important;
+}
+.btn-danger{
+  border: 0 !important;
+  border-radius: 12px !important;
+}
+
+/* ============================================
+   10) PAGINAÇÃO / TABELAS / ALERTAS
+============================================ */
+.pagination > li > a,
+.pagination > li > span{
+  border-radius: 12px !important;
+  border: 1px solid var(--sfb-border) !important;
+  margin-right: 6px !important;
+  color: var(--sfb-text) !important;
+  background: #ffffff !important;
+}
+.pagination > li > a:hover{
+  background: var(--sfb-surface-2) !important;
+  color: var(--sfb-primary) !important;
+}
+.pagination > .active > a,
+.pagination > .active > span{
+  background: var(--sfb-primary) !important;
+  border-color: var(--sfb-primary) !important;
+  color: #fff !important;
+}
+
+.table, table{
+  background: #ffffff !important;
+}
+.table > thead > tr > th,
+table thead th{
+  border-bottom: 1px solid var(--sfb-border) !important;
+  color: var(--sfb-text) !important;
+  font-weight: 800 !important;
+}
+.table > tbody > tr > td,
+table tbody td{
+  border-top: 1px solid var(--sfb-border) !important;
+  color: var(--sfb-text) !important;
+}
+
+.alert, .flash-messages .alert{
+  border-radius: var(--sfb-radius) !important;
+  border: 1px solid var(--sfb-border) !important;
+  box-shadow: var(--sfb-shadow-sm) !important;
+}
+
+/* ============================================
+   11) FOOTER
+============================================ */
+.site-footer{
+  margin-top: 28px !important;
+  background: var(--sfb-deep-green) !important;
+  color: rgba(255,255,255,.9) !important;
+  border-top: 1px solid rgba(255,255,255,.12) !important;
+}
+.site-footer a{
+  color: rgba(255,255,255,.92) !important;
+}
+.site-footer a:hover{
+  color: var(--sfb-accent) !important;
+}
+
+/* ============================================
+   12) LIMPEZA (utilitários antigos)
+============================================ */
+.hidden-xs{
+  display: none !important;
+}
+
+/* (Opcional) esconder “Powered by CKAN”
+.site-footer .attribution{
+  display: none !important;
+}
+*/
+
+/* ============================================
+   13) REMOVER LINHAS HORIZONTAIS RESIDUAIS (hr)
+============================================ */
+hr,
+.dataset-list hr,
+.module hr,
+.media-grid hr{
+  display: none !important;
+  border: 0 !important;
+}
+
+/* ============================================
+   14) REMOVER A FAIXA CINZA ACIMA DO BANNER (HOME)
+   (padding + bg do .main; + “gap” do #content)
+============================================ */
+.homepage .main{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Garantir que o primeiro bloco da home não crie “gap” no topo */
+.homepage .main > *:first-child{
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Remover o espaço cinza gerado pelo #content (home) */
+.homepage #content.container{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ============================================
+   15) FOCO (acessível) sem “outline feio”
+   - remove outline padrão
+   - mantém foco visível no teclado
+============================================ */
+*:focus{
+  outline: none !important;
+}
+*:focus-visible{
+  outline: 3px solid rgba(0,114,53,.25) !important;
+  outline-offset: 2px !important;
+}
+
+/* ============================================
+   16) Fundo cinza
+============================================ */
+
+.main {
+    padding: 0px 0 !important;
+    background: #efe !important;
+    border-style: none !important;
+    border-width: 0px !important;
+}
+
+header.masthead {
+    border-bottom: 0px none transparent !important;
+}
+aside.secondary {
+    padding-left: 15px !important;
+}
+header.page-header {
+    background-color: #fff !important;
+}
+
+/* ============================================
+   17) Ocultação do campo genérico
+============================================ */
+
+.sfb-searchbox .module-content form#home-search-form.form-search > .form-group:first-of-type{
+  display: none !important;
+}
+.sfb-searchbox {background-color: transparent !important;}
+
+
+
+
+header.masthead .container{
+  max-width: 100% !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+header.masthead nav.navbar .header-image.navbar-left{
+  flex: 0 0 280px !important;     /* << ajuste: 240–320px */
+  max-width: 280px !important;
+  margin-right: 12px !important; /* diminui o “respiro” */
+}
+
+header.masthead nav.navbar .header-image.navbar-left .logo{
+  display: block !important;
+  width: 100% !important;
+}
+
+header.masthead nav.navbar #main-navigation-toggle{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* Menu do topo alinhado à direita (como “um bloco”) */
+@media (min-width: 992px){
+  /* o container colapsável vira um flex e empurra tudo para a direita */
+  header.masthead nav.navbar #main-navigation-toggle{
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    gap: 14px !important; /* espaço entre menu e busca */
+  }
+
+  /* o <ul> do menu fica “encostado” à direita também */
+  header.masthead nav.navbar #main-navigation-toggle > ul.navbar-nav{
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    justify-content: flex-end !important;
+  }
+
+  /* opcional: a busca não “puxa” o menu para o meio */
+  header.masthead nav.navbar #main-navigation-toggle form.site-search{
+    margin-left: 14px !important;
+  }
+}
+
+/* ============================================
+   18) Correção de carrossel
+============================================ */
+
+/* ===== Carousel: trocar "bolinhas" por botões com texto ===== */
+
+/* ===== SFB Carousel: dots viram botões com texto ===== */
+
+/* Base dos dots */
+.sfb-carousel__nav .sfb-dot{
+  width: auto !important;
+  height: auto !important;
+  padding: 6px 12px !important;
+  margin: 0 6px !important;
+  border-radius: 999px !important;
+
+  /* some com a bolinha “clássica” */
+  background: rgba(255,255,255,0.25) !important;
+  border: 1px solid rgba(255,255,255,0.55) !important;
+
+  /* garante que o texto apareça */
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  color: #fff !important;
+  opacity: 1 !important;
+}
+
+/* Texto vem do aria-label */
+.sfb-carousel__nav .sfb-dot::after{
+  content: attr(aria-label) !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+
+/* Estado ativo */
+.sfb-carousel__nav .sfb-dot.is-active{
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #0b3d1f !important; /* ajuste para seu verde */
+}
+
+/* (Opcional) remove qualquer “ponto” interno se existir */
+.sfb-carousel__nav .sfb-dot::before{
+  content: "" !important;
+  display: none !important;
+}
+.sfb-carousel__btn {
+    display: none !important;
+}
+.sfb-searchbox__row {
+    margin-top: 15px !important;
+}
+
+/* ============================================
+   19) Correção de campos de checkbox
+============================================ */
+
+/* Caixa com scroll APENAS para grupos de checkbox */
+.form-group .controls:has(input[type="checkbox"]),
+.control-group .controls:has(input[type="checkbox"]) {
+  max-height: 11em !important;   /* cerca de 5 linhas */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 8px 10px !important;
+  border: 1px solid #d9d9d9 !important;
+  border-radius: 6px !important;
+  background: #efe !important;
+  box-sizing: border-box !important;
+}
+
+/* Evita scrollbar dupla em containers internos */
+.form-group .controls:has(input[type="checkbox"]) > div,
+.form-group .controls:has(input[type="checkbox"]) > ul,
+.form-group .controls:has(input[type="checkbox"]) > fieldset,
+.control-group .controls:has(input[type="checkbox"]) > div,
+.control-group .controls:has(input[type="checkbox"]) > ul,
+.control-group .controls:has(input[type="checkbox"]) > fieldset {
+  max-height: none !important;
+  overflow: visible !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+/* Cada opção em uma linha */
+.form-group .controls:has(input[type="checkbox"]) label,
+.form-group .controls:has(input[type="checkbox"]) .checkbox,
+.form-group .controls:has(input[type="checkbox"]) .form-check,
+.form-group .controls:has(input[type="checkbox"]) li,
+.control-group .controls:has(input[type="checkbox"]) label,
+.control-group .controls:has(input[type="checkbox"]) .checkbox,
+.control-group .controls:has(input[type="checkbox"]) .form-check,
+.control-group .controls:has(input[type="checkbox"]) li {
+  display: block !important;
+  width: 100% !important;
+  float: none !important;
+  margin: 0 0 6px 0 !important;
+  white-space: normal !important;
+}
+
+/* Espaço entre checkbox e texto */
+.form-group .controls:has(input[type="checkbox"]) input[type="checkbox"],
+.control-group .controls:has(input[type="checkbox"]) input[type="checkbox"] {
+  display: inline-block !important;
+  margin-right: 6px !important;
+  vertical-align: middle !important;
+}
+
+/* Remove ":" inserido por pseudo-elemento */
+.form-group .controls:has(input[type="checkbox"]) label::after,
+.form-group .controls:has(input[type="checkbox"]) .checkbox::after,
+.form-group .controls:has(input[type="checkbox"]) .form-check::after,
+.form-group .controls:has(input[type="checkbox"]) li::after,
+.control-group .controls:has(input[type="checkbox"]) label::after,
+.control-group .controls:has(input[type="checkbox"]) .checkbox::after,
+.control-group .controls:has(input[type="checkbox"]) .form-check::after,
+.control-group .controls:has(input[type="checkbox"]) li::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* ============================================
+   20) Padronização das fontes do formulário avançado
+============================================ */
+
+.homepage .module-search form label,
+.homepage .module-search form summary,
+.homepage .module-search form input,
+.homepage .module-search form select,
+.homepage .module-search form textarea,
+.homepage .module-search form option,
+.homepage .module-search form button,
+.homepage .module-search form input::placeholder,
+.homepage .module-search form textarea::placeholder {
+  font-size: 14px !important;
+  line-height: 1.3 !important;
+}
+
+/* =========================================
+   21) Filtros da busca e facets: mostrar texto completo (parte CSS)
+   ========================================= */
+
+/* Link do item do filtro */
+.search-filters .nav-item > a,
+.filters .nav-item > a,
+.module-narrow .nav-item > a {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  line-height: 1.35 !important;
+}
+
+/* Texto do filtro */
+.search-filters .nav-item > a span:first-child,
+.filters .nav-item > a span:first-child,
+.module-narrow .nav-item > a span:first-child {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  max-width: none !important;
+}
+
+/* Contador à direita */
+.search-filters .nav-item > a .item-count,
+.filters .nav-item > a .item-count,
+.module-narrow .nav-item > a .item-count,
+.search-filters .nav-item > a .badge,
+.filters .nav-item > a .badge,
+.module-narrow .nav-item > a .badge {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+  margin-left: 8px !important;
+}
+
+/* ============================================
+   22) Botão "Apagar Envio" alinhado à direita do campo
+   ============================================ */
+
+/* Esconde apenas os controles auxiliares reais desse módulo */
+#resource-url-none,
+#resource-url-upload,
+#resource-url-link,
+#field-clear-upload {
+  display: none !important;
+}
+
+/* Bloco exato do ARQUIVO JÁ ENVIADO */
+.resource-upload-field #resource-url-upload:checked + .select-type > .upload-type:first-of-type{
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-areas:
+    "label label"
+    "controls button" !important;
+  column-gap: 12px !important;
+  row-gap: 8px !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+/* Label "Arquivo" */
+.resource-upload-field #resource-url-upload:checked + .select-type > .upload-type:first-of-type > label.form-label{
+  grid-area: label !important;
+  margin: 0 !important;
+}
+
+/* Campo com o nome do arquivo */
+.resource-upload-field #resource-url-upload:checked + .select-type > .upload-type:first-of-type > .controls{
+  grid-area: controls !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+.resource-upload-field #resource-url-upload:checked + .select-type > .upload-type:first-of-type > .controls > .form-control{
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+/* Botão "Apagar Envio" */
+.resource-upload-field #resource-url-upload:checked + .select-type > .upload-type:first-of-type > .btn-remove-url{
+  grid-area: button !important;
+  position: static !important;
+  margin: 0 !important;
+  float: none !important;
+  clear: none !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  align-self: stretch !important; /* opcional: mesma altura visual da linha */
+}
+
+/* ============================================
+   23) Após clicar em "Apagar Envio":
+   - esconder o bloco do arquivo atual
+   - esconder o botão "Remover"
+   - deixar só o campo inferior de novo upload
+============================================ */
+
+/* 1) some o bloco do arquivo atual
+   (seletor com força suficiente para vencer o display:grid anterior) */
+.resource-upload-field #resource-url-upload:checked + .select-type > #field-clear-upload:checked + .upload-type{
+  display: none !important;
+}
+
+/* 2) esconde o botão "Remover" do bloco inferior */
+.resource-upload-field #resource-url-upload:checked + .select-type > #field-clear-upload:checked + .upload-type + .upload-type > .btn-remove-url{
+  display: none !important;
+}
+
+/* 3) faz o bloco inferior ocupar a largura toda */
+.resource-upload-field #resource-url-upload:checked + .select-type > #field-clear-upload:checked + .upload-type + .upload-type{
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* 4) normaliza o form-group do upload inferior */
+.resource-upload-field #resource-url-upload:checked + .select-type > #field-clear-upload:checked + .upload-type + .upload-type .form-group,
+.resource-upload-field #resource-url-upload:checked + .select-type > #field-clear-upload:checked + .upload-type + .upload-type .control-full,
+.resource-upload-field #resource-url-upload:checked + .select-type > #field-clear-upload:checked + .upload-type + .upload-type .controls{
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* 5) campo de arquivo inferior em largura total */
+.resource-upload-field #resource-url-upload:checked + .select-type > #field-clear-upload:checked + .upload-type + .upload-type input[type="file"]{
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================
+   XXX) Correções gerais de exibição
+============================================ */
+
+.masthead .main-navbar ul li a{
+  font-size: 21px !important;
+  line-height: 1.1 !important;
+}
+.masthead .main-navbar ul li a[href="/about"],
+.masthead .main-navbar ul li a[href="/about/"]{
+  display: none !important;
+}
+summary {
+    color: #040 !important;
+    font-weight: bold !important;
+}
+div.form-group {
+    margin: 0px 0px 15px !important;
+}
+.checkbox label {
+    font-weight: normal !important;
+}
+.checkbox {
+    padding-left: 30px !important;
+}
+
+/* CKAN | /group/member_new/<slug>
+   Remove o bloco "Novo Usuário" (convite por e-mail) e o "OU" do meio */
+form.add-member-form .add-member-or-wrap{
+  display: none !important;
+}
+
+/* O bloco da direita (logo após o "OU") */
+form.add-member-form .add-member-or-wrap + .col-md-5{
+  display: none !important;
+}
+
+/* Expande o bloco da esquerda ("Usuário Existente") para ocupar a largura */
+form.add-member-form .row > .col-md-5:first-child{
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 100% !important;
+}
+
+/* Retira links sociais */
+section.social {
+  display: none;
+}
+
+/* Retira exibição de licenças */
+section.license {
+  display: none;
+}
+
+/* Retira exibição de seguidores */
+div.nums, div.follow_button {
+  display: none;
+}
+
+/* Retira informação sobre licenças no fim do formulário de entrada */
+p.action-info {
+  display: none;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]),
+textarea,
+select {
+  background-color: #efe !important;
+}
+
+div.data-viewer-info {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Remove botão de remover URL XXX*/
+/*.resource-upload-field .btn-remove-url {
+    visibility: hidden !important;
+    display: none !important;
+}*/

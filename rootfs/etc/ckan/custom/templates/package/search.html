@@ -1,3 +1,7 @@
+{% block breadcrumb_content %}
+  <li class="active">{{ h.nav_link('Registros', named_route='%s.search' % dataset_type) }}</li>
+{% endblock %}
+
 {% ckan_extends %}
 
 {% block form %}

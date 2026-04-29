@@ -142,13 +142,13 @@
 
             {{ h.build_nav_main(
               (dataset_type ~ '.search',
-                h.humanize_entity_type('package', dataset_type, 'main nav') or _('Datasets'),
+                'Registros',
                 ["dataset", "resource"]),
               (org_type ~ '.index',
-                h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations'),
+                'Unidades',
                 ['organization']),
               (group_type ~ '.index',
-                h.humanize_entity_type('group', group_type, 'main nav') or _('Groups'),
+                'Projetos',
                 ['group']),
               ('home.about', _('About'))
             ) }}
@@ -168,7 +168,7 @@
         <form class="d-flex site-search" action="{% url_for dataset_type ~ '.search' %}" method="get">
           <label class="d-none" for="field-sitewide-search">
             {% block header_site_search_label %}
-              {{ h.humanize_entity_type('package', dataset_type, 'search_placeholder') or _('Search Datasets...') }}
+              {{ 'Pesquisar registros...' }}
             {% endblock %}
           </label>
           <input id="field-sitewide-search"
@@ -176,7 +176,7 @@
                  type="text"
                  name="q"
                  placeholder="{{ _('Search') }}"
-                 aria-label="{{ h.humanize_entity_type('package', dataset_type, 'search_placeholder') or _('Search datasets...') }}"/>
+                 aria-label="{{ 'Pesquisar registros...' }}"/>
           <button class="btn" type="submit" aria-label="{{ _('Submit') }}">
             <i class="fa fa-search"></i>
           </button>
