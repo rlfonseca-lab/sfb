@@ -1,0 +1,20 @@
+{# 
+  Override do badge padrão de visibilidade.
+  Mostra:
+  - nada para Público
+  - INTERNO para registros internos
+  - PRIVADO para registros privados
+#}
+
+{% set _obj = pkg if pkg is defined else (package if package is defined else (dataset if dataset is defined else none)) %}
+{% set _mode = h.sfb_access_badge(_obj) %}
+
+{% if _mode == 'INTERNO' %}
+  <span class="dataset-private label label-inverse">
+    {{ _('Interno') }}
+  </span>
+{% elif _mode == 'PRIVADO' %}
+  <span class="dataset-private label label-inverse">
+    {{ _('Privado') }}
+  </span>
+{% endif %}

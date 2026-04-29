@@ -1,0 +1,4 @@
+usr/lib/ckan/ckan/ckan/public/base/images/ckan-logo.png
+usr/lib/ckan/ckan/ckan/templates/home/snippets/promoted.html
+usr/lib/ckan/ckan/ckan/templates/package/snippets/package_basic_fields.html
+usr/lib/ckan/venv/src/ckanext-scheming/ckanext/scheming/scheming_presets_custom.json

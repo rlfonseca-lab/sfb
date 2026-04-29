@@ -1,0 +1,18 @@
+[Unit]
+Description=Apache Solr
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=solr
+Group=solr
+WorkingDirectory=/opt/solr
+LimitNOFILE=65000
+Restart=on-failure
+
+# Bind local garantido via Jetty (evita *.8983) + preferência por IPv4
+ExecStart=/opt/solr/bin/solr start -f -p 8983 -s /var/solr/data -m 512m -a "-Djetty.host=127.0.0.1 -Djava.net.preferIPv4Stack=true"
+
+[Install]
+WantedBy=multi-user.target

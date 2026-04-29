@@ -1,0 +1,463 @@
+{# Home search override: 1 coluna, texto preto, checkboxes, inclui campos do YAML #}
+
+<style>
+  .homepage .module-search, .homepage .module-search * { color:#000 !important; }
+  .homepage .module-search input, .homepage .module-search select { color:#000 !important; }
+  .homepage .module-search ::placeholder { color:#555 !important; opacity:1; }
+  .homepage .module-search .form-group { margin-bottom: 12px; }
+  .homepage .module-search .checkbox { margin: 6px 0; }
+  .homepage .module-search .checkbox label { font-weight: normal; }
+  .homepage .module-search details { margin: 10px 0; }
+  .homepage .module-search details > summary { cursor: pointer; font-weight: bold; }
+  .homepage .module-search .smallhint { font-size: 12px; color:#333 !important; }
+</style>
+
+<div class="module module-search module-narrow module-shallow box">
+  <h2 class="module-heading">{{ _('Pesquisar dados') }}</h2>
+
+  <div class="module-content">
+    <form id="home-search-form" class="form-search" method="get" action="{{ h.url_for('dataset.search') }}">
+
+      <div class="form-group">
+        <label for="home-q">{{ _('Termo de busca') }}</label>
+        <div class="search-input control-group search-giant">
+          <input id="home-q" type="text" class="search" name="q"
+                 value="{{ request.args.get('q','') }}"
+                 placeholder="{{ _('Ex.: meio ambiente') }}"
+                 autocomplete="off">
+          <button type="submit" aria-label="{{ _('Pesquisar') }}"><i class="icon-search"></i></button>
+        </div>
+        <div class="smallhint">
+          Campos de texto (Autor/Email/Contato) são adicionados ao termo de busca (q).
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="home-org">{{ _('Unidade') }}</label>
+        <select id="home-org" name="organization" class="form-control">
+          <option value="">{{ _('Todas') }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="home-acesso">{{ _('Acesso') }}</label>
+        <select id="home-acesso" name="extras_acesso" class="form-control">
+          <option value="">{{ _('Todos') }}</option>
+          <option value="Público">Público</option>
+          <option value="Interno SFB">Interno SFB</option>
+          <option value="Restrito projeto">Restrito projeto</option>
+          <option value="Em validação">Em validação</option>
+          <option value="Histórico/obsoleto">Histórico/obsoleto</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="home-escopo">{{ _('Escopo') }}</label>
+        <select id="home-escopo" name="extras_escopo" class="form-control">
+          <option value="">{{ _('Todos') }}</option>
+          <option value="Dado primário">Dado primário</option>
+          <option value="Dado derivado/analítico">Dado derivado/analítico</option>
+          <option value="Base de referência">Base de referência</option>
+          <option value="Produto informacional">Produto informacional</option>
+          <option value="Documento técnico/metodológico">Documento técnico/metodológico</option>
+          <option value="Produto editorial/publicação">Produto editorial/publicação</option>
+          <option value="Código/Script/ETL">Código/Script/ETL</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="home-abr">{{ _('Abrangência') }}</label>
+        <select id="home-abr" name="extras_abrangencia" class="form-control">
+          <option value="">{{ _('Todas') }}</option>
+          <option value="Nacional">Nacional</option>
+          <option value="Regional">Regional</option>
+          <option value="Estadual">Estadual</option>
+          <option value="Municipal">Municipal</option>
+          <option value="Bioma">Bioma</option>
+          <option value="Unidade Amostral IFN">Unidade Amostral IFN</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="home-fonte">{{ _('Fonte') }}</label>
+        <select id="home-fonte" name="extras_fonte" class="form-control">
+          <option value="">{{ _('Todas') }}</option>
+          <option value="Produção própria SFB">Produção própria SFB</option>
+          <option value="Projeto IFN Brasil (BID/IICA/SFB)">Projeto IFN Brasil (BID/IICA/SFB)</option>
+          <option value="Empresa contratada">Empresa contratada</option>
+          <option value="Parceiro institucional">Parceiro institucional</option>
+          <option value="Base externa integrada">Base externa integrada</option>
+        </select>
+      </div>
+
+      <details>
+        <summary>Filtros avançados (listas)</summary>
+
+        <div class="form-group">
+          <label>{{ _('Grupo') }}</label>
+          <div id="cb-grupo"></div>
+        </div>
+
+        <div class="form-group">
+          <label>{{ _('Temas') }}</label>
+          <div id="cb-temas"></div>
+        </div>
+
+        <div class="form-group">
+          <label>{{ _('Projeto') }}</label>
+          <div id="cb-projeto"></div>
+        </div>
+
+          <div class="form-group">
+            <label for="home-ccd">{{ _('CCD') }}</label>
+            <select id="home-ccd" name="ccd_facet" class="form-control">
+            <option value="">{{ _('Todos') }}</option>
+            <option value="310">310 - Inventário Florestal Nacional</option>
+            <option value="311">311 - Planejamento Metodológico e Organização do Inventário</option>
+            <option value="312">312 - Operações de Campo e Coleta de Dados do Inventário</option>
+            <option value="313">313 - Tratamento, Validação e Análise de Dados do Inventário</option>
+            <option value="314">314 - Resultados, Publicações e Disseminação do Inventário</option>
+            <option value="330">330 - Produção, Gestão e Disseminação de Informações Florestais</option>
+            <option value="331">331 - Governança, Operação e Evolução da Infraestrutura Nacional de Informações Florestais</option>
+            <option value="332">332 - Integração, Interoperabilidade e Curadoria de Bases Florestais</option>
+            <option value="333">333 - Indicadores, Estatísticas e Produtos Analíticos Florestais</option>
+            <option value="334">334 - Disseminação, Atendimento e Acesso à Informação Florestal</option>
+            <option value="340">340 - Cadastro Nacional de Florestas Públicas</option>
+            <option value="341">341 - Articulação institucional e obtenção de bases</option>
+            <option value="342">342 - Tratamento, validação e análise das bases</option>
+            <option value="343">343 - Produtos informacionais e transparência do CNFP</option>
+            <option value="344">344 - Atendimento a demandas do CNFP</option>
+            </select>
+          </div>
+
+
+        <div class="form-group">
+          <label>{{ _('Referência Geográfica') }}</label>
+          <div id="cb-refgeo"></div>
+        </div>
+
+        <div class="form-group">
+          <label>{{ _('Sistema Relacionado') }}</label>
+          <div id="cb-sistema"></div>
+        </div>
+
+        <div class="form-group">
+          <label>{{ _('Etiquetas') }}</label>
+          <div id="cb-etiquetas"></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Filtros avançados (texto e datas)</summary>
+
+        <div class="form-group">
+          <label for="home-numero-sei">{{ _('Número SEI') }}</label>
+          <input id="home-numero-sei" class="form-control" type="text" name="extras_numero_sei" placeholder="Ex.: 00000.000000/0000-00">
+        </div>
+
+        <div class="form-group">
+          <label for="home-id-origem">{{ _('Identificador na origem') }}</label>
+          <input id="home-id-origem" class="form-control" type="text" name="extras_id_origem" placeholder="Ex.: SNIF-12345">
+        </div>
+
+        <div class="form-group">
+          <label for="home-doc-rel">{{ _('Documento relacionado') }}</label>
+          <input id="home-doc-rel" class="form-control" type="text" name="extras_doc_relacionado" placeholder="Ex.: SEI/URL/ID">
+        </div>
+
+        <div class="form-group">
+          <label for="home-doc-fut">{{ _('Documento futuro') }}</label>
+          <input id="home-doc-fut" class="form-control" type="text" name="extras_doc_futuro" placeholder="Ex.: SEI/URL/ID">
+        </div>
+
+        <div class="form-group">
+          <label for="home-data-cri">{{ _('Data de criação') }}</label>
+          <input id="home-data-cri" class="form-control" type="date" name="extras_data_criacao">
+        </div>
+
+        <div class="form-group">
+          <label for="home-data-at">{{ _('Data da última atualização') }}</label>
+          <input id="home-data-at" class="form-control" type="date" name="extras_data_atualizacao">
+        </div>
+
+        <div class="form-group">
+          <label for="home-valid">{{ _('Validade') }}</label>
+          <input id="home-valid" class="form-control" type="date" name="extras_validade">
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+          <label for="home-autor">{{ _('Autor') }}</label>
+          <input id="home-autor" class="form-control" type="text" placeholder="Ex.: José da Silva">
+        </div>
+
+        <div class="form-group">
+          <label for="home-autor-email">{{ _('Email do Autor') }}</label>
+          <input id="home-autor-email" class="form-control" type="text" placeholder="Ex.: josesilva@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="home-contato">{{ _('Pessoa de contato') }}</label>
+          <input id="home-contato" class="form-control" type="text" placeholder="Ex.: Contato institucional">
+        </div>
+
+        <div class="form-group">
+          <label for="home-contato-email">{{ _('Email de contato') }}</label>
+          <input id="home-contato-email" class="form-control" type="text" placeholder="Ex.: contato@email.com">
+        </div>
+
+      </details>
+
+      <div style="margin-top:12px">
+        <a class="btn btn-default" href="{{ h.url_for('home.index') }}">{{ _('Limpar') }}</a>
+        <button class="btn btn-primary" type="submit">{{ _('Pesquisar') }}</button>
+      </div>
+    </form>
+
+    <script>
+      (function () {
+        function getAll(name) {
+          var params = new URLSearchParams(window.location.search);
+          var out = [];
+          params.forEach(function(v,k){ if(k===name){ out.push(v); } });
+          return out;
+        }
+
+        function setSelect(id, paramName) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          var vals = getAll(paramName);
+          if (!vals.length) return;
+          el.value = vals[0];
+        }
+
+        function setInput(id, paramName) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          var vals = getAll(paramName);
+          if (!vals.length) return;
+          el.value = vals[0];
+        }
+
+        function renderCheckboxList(containerId, paramName, options) {
+          var el = document.getElementById(containerId);
+          if (!el) return;
+
+          var selected = getAll(paramName);
+          options.forEach(function(opt){
+            var div = document.createElement('div');
+            div.className = 'checkbox';
+
+            var label = document.createElement('label');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.name = paramName;
+            input.value = opt.value;
+
+            if (selected.indexOf(opt.value) !== -1) input.checked = true;
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(' ' + opt.label));
+            div.appendChild(label);
+            el.appendChild(div);
+          });
+        }
+
+        function fillOrganizations() {
+          var sel = document.getElementById('home-org');
+          if (!sel) return;
+
+          fetch('/api/3/action/organization_list?all_fields=true&limit=1000')
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+              if (!data || !data.success || !data.result) return;
+              data.result.forEach(function(org){
+                var opt = document.createElement('option');
+                opt.value = org.name;
+                opt.textContent = org.display_name || org.title || org.name;
+                sel.appendChild(opt);
+              });
+              setSelect('home-org','organization');
+            })
+            .catch(function(){});
+        }
+
+        // Listas do seu YAML (multi checkbox)
+        var OPT_GRUPO = [
+          {value:'ifn', label:'IFN - Inventário Florestal Nacional'},
+          {value:'snif', label:'SNIF - Sistema Nacional de Informações Florestais'},
+          {value:'cnfp', label:'CNFP - Cadastro Nacional de Florestas Públicas'},
+          {value:'fomento', label:'FOMENTO - Fomento e Desenvolvimento Florestal'},
+          {value:'lpf', label:'LPF - Pesquisa Aplicada e Inovação'},
+          {value:'govinfo', label:'GOVINFO - Governança e Gestão da Informação'}
+        ];
+
+        var OPT_TEMAS = [
+          {value:'IFN – Metodologia e desenho amostral', label:'IFN – Metodologia e desenho amostral'},
+          {value:'IFN – Planejamento e instrumentos', label:'IFN – Planejamento e instrumentos'},
+          {value:'IFN – Operações de campo', label:'IFN – Operações de campo'},
+          {value:'IFN – Logística de campo', label:'IFN – Logística de campo'},
+          {value:'IFN – Controle de qualidade', label:'IFN – Controle de qualidade'},
+          {value:'IFN – Tratamento e validação de dados', label:'IFN – Tratamento e validação de dados'},
+          {value:'IFN – Consolidação e análises', label:'IFN – Consolidação e análises'},
+          {value:'IFN – Dados biofísicos', label:'IFN – Dados biofísicos'},
+          {value:'IFN – Dados socioambientais', label:'IFN – Dados socioambientais'},
+          {value:'IFN – Relatórios e publicações', label:'IFN – Relatórios e publicações'},
+          {value:'CNFP – Produção florestal', label:'CNFP – Produção florestal'},
+          {value:'CNFP – Cadeias produtivas', label:'CNFP – Cadeias produtivas'},
+          {value:'CNFP – Manejo florestal', label:'CNFP – Manejo florestal'},
+          {value:'CNFP – Regularização e fiscalização', label:'CNFP – Regularização e fiscalização'},
+          {value:'CNFP – Indicadores e estatísticas', label:'CNFP – Indicadores e estatísticas'},
+          {value:'CARBONO – Inventários e estimativas', label:'CARBONO – Inventários e estimativas'},
+          {value:'CARBONO – Metodologias e protocolos', label:'CARBONO – Metodologias e protocolos'},
+          {value:'CARBONO – Projetos e iniciativas', label:'CARBONO – Projetos e iniciativas'},
+          {value:'CARBONO – Monitoramento e MRV', label:'CARBONO – Monitoramento e MRV'},
+          {value:'CARBONO – Relatórios e publicações', label:'CARBONO – Relatórios e publicações'},
+          {value:'RESTFLORESTAL – Áreas degradadas e restauração', label:'RESTFLORESTAL – Áreas degradadas e restauração'},
+          {value:'RESTFLORESTAL – Assistência técnica e extensão', label:'RESTFLORESTAL – Assistência técnica e extensão'},
+          {value:'RESTFLORESTAL – Planos e projetos', label:'RESTFLORESTAL – Planos e projetos'},
+          {value:'RESTFLORESTAL – Indicadores e monitoramento', label:'RESTFLORESTAL – Indicadores e monitoramento'},
+          {value:'RESTFLORESTAL – Relatórios e publicações', label:'RESTFLORESTAL – Relatórios e publicações'},
+          {value:'LPF – Pesquisa florestal aplicada', label:'LPF – Pesquisa florestal aplicada'},
+          {value:'LPF – Tecnologia e inovação', label:'LPF – Tecnologia e inovação'},
+          {value:'LPF – Manejo e silvicultura', label:'LPF – Manejo e silvicultura'},
+          {value:'LPF – Sementes, mudas e viveiros', label:'LPF – Sementes, mudas e viveiros'},
+          {value:'LPF – Produtos madeireiros', label:'LPF – Produtos madeireiros'},
+          {value:'LPF – Produtos não madeireiros', label:'LPF – Produtos não madeireiros'},
+          {value:'LPF – Bioeconomia e cadeias de valor', label:'LPF – Bioeconomia e cadeias de valor'},
+          {value:'LPF – Pagamentos por serviços ambientais', label:'LPF – Pagamentos por serviços ambientais'},
+          {value:'LPF – Desenvolvimento territorial', label:'LPF – Desenvolvimento territorial'},
+          {value:'LPF – Governança e políticas públicas', label:'LPF – Governança e políticas públicas'},
+          {value:'LPF – Indicadores e monitoramento', label:'LPF – Indicadores e monitoramento'},
+          {value:'LPF – Produtos florestais inovadores', label:'LPF – Produtos florestais inovadores'},
+          {value:'LPF – Conservação e biodiversidade', label:'LPF – Conservação e biodiversidade'},
+          {value:'LPF – Estudos de mercado/viabilidade', label:'LPF – Estudos de mercado/viabilidade'},
+          {value:'GOVINFO – Protocolos, manuais e guias internos', label:'GOVINFO – Protocolos, manuais e guias internos'},
+          {value:'GOVINFO – Padrões e nomenclatura', label:'GOVINFO – Padrões e nomenclatura'},
+          {value:'GOVINFO – Inventário de sistemas e bases', label:'GOVINFO – Inventário de sistemas e bases'},
+          {value:'GOVINFO – ETL, pipelines e automações', label:'GOVINFO – ETL, pipelines e automações'},
+          {value:'GOVINFO – Segurança, acesso e permissões', label:'GOVINFO – Segurança, acesso e permissões'}
+        ];
+
+        var OPT_PROJETO = [
+          {value:'IFN Brasil – ATN/SX-19186-BR', label:'IFN Brasil – ATN/SX-19186-BR'},
+          {value:'Projeto CNFP (institucional)', label:'Projeto CNFP (institucional)'},
+          {value:'Projeto FNDF (institucional)', label:'Projeto FNDF (institucional)'},
+          {value:'Projeto LPF (institucional)', label:'Projeto LPF (institucional)'},
+          {value:'Projeto de Governança/Informação (institucional)', label:'Projeto de Governança/Informação (institucional)'},
+          {value:'Projeto/Contrato específico (SIGLA/ANO)', label:'Projeto/Contrato específico (SIGLA/ANO)'}
+        ];
+
+        var OPT_REFGEO = [
+          {value:'Brasil',label:'Brasil'},{value:'Norte',label:'Norte'},{value:'Nordeste',label:'Nordeste'},{value:'Centro-Oeste',label:'Centro-Oeste'},
+          {value:'Sudeste',label:'Sudeste'},{value:'Sul',label:'Sul'},
+          {value:'AC',label:'AC'},{value:'AL',label:'AL'},{value:'AP',label:'AP'},{value:'AM',label:'AM'},{value:'BA',label:'BA'},{value:'CE',label:'CE'},
+          {value:'DF',label:'DF'},{value:'ES',label:'ES'},{value:'GO',label:'GO'},{value:'MA',label:'MA'},{value:'MT',label:'MT'},{value:'MS',label:'MS'},
+          {value:'MG',label:'MG'},{value:'PA',label:'PA'},{value:'PB',label:'PB'},{value:'PR',label:'PR'},{value:'PE',label:'PE'},{value:'PI',label:'PI'},
+          {value:'RJ',label:'RJ'},{value:'RN',label:'RN'},{value:'RS',label:'RS'},{value:'RO',label:'RO'},{value:'RR',label:'RR'},{value:'SC',label:'SC'},
+          {value:'SP',label:'SP'},{value:'SE',label:'SE'},{value:'TO',label:'TO'},
+          {value:'Amazônia',label:'Amazônia'},{value:'Cerrado',label:'Cerrado'},{value:'Caatinga',label:'Caatinga'},{value:'Mata Atlântica',label:'Mata Atlântica'},
+          {value:'Pantanal',label:'Pantanal'},{value:'Pampa',label:'Pampa'}
+        ];
+
+        var OPT_SISTEMA = [
+          {value:'ArcGIS Enterprise',label:'ArcGIS Enterprise'},
+          {value:'ArcGIS Online',label:'ArcGIS Online'},
+          {value:'Serviço ArcGIS (Map/Feature Service)',label:'Serviço ArcGIS (Map/Feature Service)'},
+          {value:'Geodatabase (GDB) institucional',label:'Geodatabase (GDB) institucional'},
+          {value:'Portal/Servidor de mapas (GeoServer/OGC)',label:'Portal/Servidor de mapas (GeoServer/OGC)'},
+          {value:'Banco SQL (transacional)',label:'Banco SQL (transacional)'},
+          {value:'PostgreSQL/PostGIS (analítico)',label:'PostgreSQL/PostGIS (analítico)'},
+          {value:'ETL/DAG (pipeline/automação)',label:'ETL/DAG (pipeline/automação)'},
+          {value:'SharePoint/Teams (Microsoft 365)',label:'SharePoint/Teams (Microsoft 365)'},
+          {value:'OneDrive institucional',label:'OneDrive institucional'},
+          {value:'Servidor/Drive de rede SFB',label:'Servidor/Drive de rede SFB'},
+          {value:'GitLab/Git (repositório de código)',label:'GitLab/Git (repositório de código)'},
+          {value:'Ferramenta BI/Painel (Power BI ou similar)',label:'Ferramenta BI/Painel (Power BI ou similar)'},
+          {value:'CKAN (catálogo)',label:'CKAN (catálogo)'}
+        ];
+
+        var OPT_ETIQUETAS = [
+          {value:'Dados biofísicos',label:'Dados biofísicos'},
+          {value:'Dados socioambientais',label:'Dados socioambientais'},
+          {value:'Geoespacial',label:'Geoespacial'},
+          {value:'Tabular',label:'Tabular'},
+          {value:'Documentação metodológica',label:'Documentação metodológica'},
+          {value:'Controle de qualidade',label:'Controle de qualidade'},
+          {value:'Série histórica',label:'Série histórica'},
+          {value:'Publicação',label:'Publicação'},
+          {value:'Base de referência',label:'Base de referência'},
+          {value:'Produto analítico',label:'Produto analítico'},
+          {value:'Script/ETL',label:'Script/ETL'},
+          {value:'Painel/visualização',label:'Painel/visualização'},
+          {value:'Relatório técnico',label:'Relatório técnico'},
+          {value:'Manual/Protocolo',label:'Manual/Protocolo'},
+          {value:'Produto de consultoria',label:'Produto de consultoria'}
+        ];
+
+        // Renderizar checkboxes (usa os nomes extras_<field_name>)
+        renderCheckboxList('cb-grupo',   'extras_grupo', OPT_GRUPO);
+        renderCheckboxList('cb-temas',   'extras_temas', OPT_TEMAS);
+        renderCheckboxList('cb-projeto', 'extras_projeto_nome', OPT_PROJETO);
+        renderCheckboxList('cb-refgeo',  'extras_referencia_geo', OPT_REFGEO);
+        renderCheckboxList('cb-sistema', 'extras_sistema_relacionado', OPT_SISTEMA);
+        renderCheckboxList('cb-etiquetas','extras_etiquetas', OPT_ETIQUETAS);
+
+        // Preencher orgs e setar selects/inputs a partir da URL
+        fillOrganizations();
+        setSelect('home-acesso','extras_acesso');
+        setSelect('home-escopo','extras_escopo');
+        setSelect('home-abr','extras_abrangencia');
+        setSelect('home-fonte','extras_fonte');
+
+          setSelect('home-ccd','ccd_facet');
+        setInput('home-numero-sei','extras_numero_sei');
+        setInput('home-id-origem','extras_id_origem');
+        setInput('home-doc-rel','extras_doc_relacionado');
+        setInput('home-doc-fut','extras_doc_futuro');
+        setInput('home-data-cri','extras_data_criacao');
+        setInput('home-data-at','extras_data_atualizacao');
+        setInput('home-valid','extras_validade');
+
+        // Autor/contato: preserva valores em inputs (pela URL) e injeta no q no submit
+        setInput('home-autor','_author');
+        setInput('home-autor-email','_author_email');
+        setInput('home-contato','_maintainer');
+        setInput('home-contato-email','_maintainer_email');
+
+        document.getElementById('home-search-form').addEventListener('submit', function(){
+          function val(id){ var e=document.getElementById(id); return e? (e.value||'').trim() : ''; }
+          var qEl = document.getElementById('home-q');
+          var q = (qEl && qEl.value) ? qEl.value.trim() : '';
+
+          var extraText = [val('home-autor'), val('home-autor-email'), val('home-contato'), val('home-contato-email')]
+            .filter(Boolean)
+            .join(' ');
+
+          if (extraText) {
+            q = (q ? (q + ' ') : '') + extraText;
+            if (qEl) qEl.value = q;
+          }
+
+          // Persistir esses 4 campos como params “_...” para voltar preenchido ao voltar do /dataset
+          // (sem exigir facet/solr). Como é GET, criamos hidden inputs.
+          function ensureHidden(name, value){
+            var existing = document.querySelector('input[type="hidden"][name="'+name+'"]');
+            if (!existing) {
+              existing = document.createElement('input');
+              existing.type = 'hidden';
+              existing.name = name;
+              document.getElementById('home-search-form').appendChild(existing);
+            }
+            existing.value = value || '';
+          }
+          ensureHidden('_author', val('home-autor'));
+          ensureHidden('_author_email', val('home-autor-email'));
+          ensureHidden('_maintainer', val('home-contato'));
+          ensureHidden('_maintainer_email', val('home-contato-email'));
+        });
+      })();
+    </script>
+  </div>
+</div>

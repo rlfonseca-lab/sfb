@@ -1,0 +1,16 @@
+/* Facets colapsáveis (details/summary) */
+details.sfb-facet > summary{
+  cursor: pointer !important;
+  list-style: none !important;
+}
+details.sfb-facet > summary::-webkit-details-marker{ display: none !important; }
+details.sfb-facet > summary::marker{ content: "" !important; }
+
+/* Indicador de abrir/fechar */
+details.sfb-facet > summary::after{
+  content: "▸";
+  float: right;
+}
+details.sfb-facet[open] > summary::after{
+  content: "▾";
+}

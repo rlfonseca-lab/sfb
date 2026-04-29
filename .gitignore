@@ -1,0 +1,35 @@
+# Backups e resíduos
+*.bak
+*.bkp
+*.BKP
+*.orig
+*.old
+*~
+*.tmp
+*.log
+*.swp
+
+# Python/cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+*.egg-info/
+
+# Gettext compilado: gerar a partir dos .po
+*.mo
+
+# Segredos reais
+rootfs/etc/ckan/ckan.ini
+rootfs/etc/letsencrypt/
+rootfs/etc/ssl/private/
+*.key
+*.pem
+*.crt
+
+# Dados, uploads, índices e logs
+rootfs/var/lib/ckan/
+rootfs/var/log/
+rootfs/var/solr/
+*.sqlite

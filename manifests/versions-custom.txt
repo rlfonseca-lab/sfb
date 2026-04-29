@@ -1,0 +1,4 @@
+---------- VERSÃO DO CKAN ----------
+CKAN_VERSION=2.10.7
+CKAN_PACKAGE_DIR=/usr/lib/ckan/ckan/ckan
+PYTHON=3.10.20 (main, Mar  3 2026, 09:24:47) [GCC 13.3.0]

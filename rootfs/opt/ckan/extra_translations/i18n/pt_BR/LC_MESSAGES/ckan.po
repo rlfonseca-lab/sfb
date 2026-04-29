@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: pt_BR\n"
+
+msgid "Organization"
+msgstr "Tema"
+
+msgid "Organizations"
+msgstr "Temas"
+
+msgid "Group"
+msgstr "Coleção"
+
+msgid "Groups"
+msgstr "Coleções"
+
+msgid "Dataset"
+msgstr "Registro"
+
+msgid "Datasets"
+msgstr "Registros"

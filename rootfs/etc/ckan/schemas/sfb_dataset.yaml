@@ -1,0 +1,540 @@
+scheming_version: 2
+dataset_type: dataset
+about: Schema SFB
+about_url: http://github.com/ckan/ckanext-scheming
+
+dataset_fields:
+- field_name: title
+  label: Título
+  preset: title
+  form_placeholder: O título do material a ser catalogado
+
+- field_name: name
+  label: Slug
+  preset: dataset_slug
+  form_placeholder: 'Ex: minha_documentacao'
+
+- field_name: notes
+  label: Descrição
+  form_snippet: markdown.html
+
+- field_name: owner_org
+  label: Unidade responsável
+  preset: dataset_organization
+
+- field_name: author
+  label: Autor/Fonte
+  form_placeholder: José da Silva
+  display_property: dc:creator
+
+- field_name: responsavel
+  label: Responsável pelo cadastro
+  form_placeholder: José da Silva
+
+- field_name: responsavel_email
+  label: Email do responsável
+  form_placeholder: josesilva@email.com
+  display_property: dc:contributor
+  display_snippet: email.html
+  display_email_name_field: author
+
+- field_name: grupo_institucional
+  label: Grupo
+  preset: multiple_checkbox
+  choices:
+  - value: SNIF
+    label: SNIF
+  - value: IFN
+    label: IFN
+  - value: CNFP
+    label: CNFP
+  - value: Regularização Ambiental
+    label: Regularização Ambiental
+
+- field_name: temas
+  label: Tema
+  preset: multiple_checkbox
+  choices:
+  - value: IFN – Metodologia e desenho amostral
+    label: IFN – Metodologia e desenho amostral
+  - value: IFN – Planejamento e instrumentos
+    label: IFN – Planejamento e instrumentos
+  - value: IFN – Operações de campo
+    label: IFN – Operações de campo
+  - value: IFN – Logística de campo
+    label: IFN – Logística de campo
+  - value: IFN – Controle de qualidade
+    label: IFN – Controle de qualidade
+  - value: IFN – Tratamento e validação de dados
+    label: IFN – Tratamento e validação de dados
+  - value: IFN – Consolidação e análises
+    label: IFN – Consolidação e análises
+  - value: IFN – Dados biofísicos
+    label: IFN – Dados biofísicos
+  - value: IFN – Dados socioambientais
+    label: IFN – Dados socioambientais
+  - value: IFN – Relatórios e publicações
+    label: IFN – Relatórios e publicações
+  - value: CNFP – Produção florestal
+    label: CNFP – Produção florestal
+  - value: CNFP – Cadeias produtivas
+    label: CNFP – Cadeias produtivas
+  - value: CNFP – Manejo florestal
+    label: CNFP – Manejo florestal
+  - value: CNFP – Regularização e fiscalização
+    label: CNFP – Regularização e fiscalização
+  - value: CNFP – Indicadores e estatísticas
+    label: CNFP – Indicadores e estatísticas
+  - value: CARBONO – Inventários e estimativas
+    label: CARBONO – Inventários e estimativas
+  - value: CARBONO – Metodologias e protocolos
+    label: CARBONO – Metodologias e protocolos
+  - value: CARBONO – Projetos e iniciativas
+    label: CARBONO – Projetos e iniciativas
+  - value: CARBONO – Monitoramento e MRV
+    label: CARBONO – Monitoramento e MRV
+  - value: CARBONO – Relatórios e publicações
+    label: CARBONO – Relatórios e publicações
+  - value: RESTFLORESTAL – Áreas degradadas e restauração
+    label: RESTFLORESTAL – Áreas degradadas e restauração
+  - value: RESTFLORESTAL – Assistência técnica e extensão
+    label: RESTFLORESTAL – Assistência técnica e extensão
+  - value: RESTFLORESTAL – Planos e projetos
+    label: RESTFLORESTAL – Planos e projetos
+  - value: RESTFLORESTAL – Indicadores e monitoramento
+    label: RESTFLORESTAL – Indicadores e monitoramento
+  - value: RESTFLORESTAL – Relatórios e publicações
+    label: RESTFLORESTAL – Relatórios e publicações
+  - value: LPF – Pesquisa florestal aplicada
+    label: LPF – Pesquisa florestal aplicada
+  - value: LPF – Tecnologia e inovação
+    label: LPF – Tecnologia e inovação
+  - value: LPF – Manejo e silvicultura
+    label: LPF – Manejo e silvicultura
+  - value: LPF – Sementes, mudas e viveiros
+    label: LPF – Sementes, mudas e viveiros
+  - value: LPF – Produtos madeireiros
+    label: LPF – Produtos madeireiros
+  - value: LPF – Produtos não madeireiros
+    label: LPF – Produtos não madeireiros
+  - value: LPF – Bioeconomia e cadeias de valor
+    label: LPF – Bioeconomia e cadeias de valor
+  - value: LPF – Pagamentos por serviços ambientais
+    label: LPF – Pagamentos por serviços ambientais
+  - value: LPF – Desenvolvimento territorial
+    label: LPF – Desenvolvimento territorial
+  - value: LPF – Governança e políticas públicas
+    label: LPF – Governança e políticas públicas
+  - value: LPF – Indicadores e monitoramento
+    label: LPF – Indicadores e monitoramento
+  - value: LPF – Produtos florestais inovadores
+    label: LPF – Produtos florestais inovadores
+  - value: LPF – Conservação e biodiversidade
+    label: LPF – Conservação e biodiversidade
+  - value: LPF – Estudos de mercado/viabilidade
+    label: LPF – Estudos de mercado/viabilidade
+  - value: GOVINFO – Protocolos, manuais e guias internos
+    label: GOVINFO – Protocolos, manuais e guias internos
+  - value: GOVINFO – Padrões e nomenclatura
+    label: GOVINFO – Padrões e nomenclatura
+  - value: GOVINFO – Inventário de sistemas e bases
+    label: GOVINFO – Inventário de sistemas e bases
+  - value: GOVINFO – ETL, pipelines e automações
+    label: GOVINFO – ETL, pipelines e automações
+  - value: GOVINFO – Segurança, acesso e permissões
+    label: GOVINFO – Segurança, acesso e permissões
+
+- field_name: colecao
+  label: Coleção
+  preset: multiple_checkbox
+  choices:
+  - value: atividade finalística
+    label: atividade finalística
+  - value: atividade meio
+    label: atividade meio
+  - value: atividade por projeto
+    label: atividade por projeto
+
+- field_name: sfb_grupo
+  label: Projeto
+  choices_helper: sfbgroups_group_choices
+  form_snippet: select.html
+  display_snippet: select.html
+  validators: ignore_missing
+
+- field_name: ccd
+  label: Código de Classificação de Documentos (CCD)
+  preset: select
+  validators: ignore_missing scheming_choices
+  form_include_blank_choice: true
+  choices:
+  - value: 310 - Inventário Florestal Nacional
+    label: 310 - Inventário Florestal Nacional
+  - value: 311 - Planejamento Metodológico e Organização do Inventário
+    label: 311 - Planejamento Metodológico e Organização do Inventário
+  - value: 312 - Operações de Campo e Coleta de Dados do Inventário
+    label: 312 - Operações de Campo e Coleta de Dados do Inventário
+  - value: 313 - Tratamento, Validação e Análise de Dados do Inventário
+    label: 313 - Tratamento, Validação e Análise de Dados do Inventário
+  - value: 314 - Resultados, Publicações e Disseminação do Inventário
+    label: 314 - Resultados, Publicações e Disseminação do Inventário
+  - value: 330 - Produção, Gestão e Disseminação de Informações Florestais
+    label: 330 - Produção, Gestão e Disseminação de Informações Florestais
+  - value: 331 - Governança, Operação e Evolução da Infraestrutura Nacional de Informações Florestais
+    label: 331 - Governança, Operação e Evolução da Infraestrutura Nacional de Informações Florestais
+  - value: 332 - Integração, Interoperabilidade e Curadoria de Bases Florestais
+    label: 332 - Integração, Interoperabilidade e Curadoria de Bases Florestais
+  - value: 333 - Indicadores, Estatísticas e Produtos Analíticos Florestais
+    label: 333 - Indicadores, Estatísticas e Produtos Analíticos Florestais
+  - value: 334 - Disseminação, Atendimento e Acesso à Informação Florestal
+    label: 334 - Disseminação, Atendimento e Acesso à Informação Florestal
+  - value: 340 - Cadastro Nacional de Florestas Públicas
+    label: 340 - Cadastro Nacional de Florestas Públicas
+  - value: 341 - Articulação institucional e obtenção de bases
+    label: 341 - Articulação institucional e obtenção de bases
+  - value: 342 - Tratamento, validação e análise das bases
+    label: 342 - Tratamento, validação e análise das bases
+  - value: 343 - Produtos informacionais e transparência do CNFP
+    label: 343 - Produtos informacionais e transparência do CNFP
+  - value: 344 - Atendimento a demandas do CNFP
+    label: 344 - Atendimento a demandas do CNFP
+
+- field_name: escopo
+  label: Escopo do conteúdo
+  form_snippet: select.html
+  display_snippet: select.html
+  choices:
+  - value: Dado primário
+    label: Dado primário
+  - value: Dado derivado/analítico
+    label: Dado derivado/analítico
+  - value: Base de referência
+    label: Base de referência
+  - value: Produto informacional
+    label: Produto informacional
+  - value: Documento técnico/metodológico
+    label: Documento técnico/metodológico
+  - value: Produto editorial/publicação
+    label: Produto editorial/publicação
+  - value: Código/Script/ETL
+    label: Código/Script/ETL
+
+- field_name: data_registro
+  label: Data de cadastro no repositório
+
+- field_name: etiquetas
+  label: Etiquetas
+  preset: multiple_checkbox
+  choices:
+  - value: Dados biofísicos
+    label: Dados biofísicos
+  - value: Dados socioambientais
+    label: Dados socioambientais
+  - value: Geoespacial
+    label: Geoespacial
+  - value: Tabular
+    label: Tabular
+  - value: Documentação metodológica
+    label: Documentação metodológica
+  - value: Controle de qualidade
+    label: Controle de qualidade
+  - value: Série histórica
+    label: Série histórica
+  - value: Publicação
+    label: Publicação
+  - value: Base de referência
+    label: Base de referência
+  - value: Produto analítico
+    label: Produto analítico
+  - value: Script/ETL
+    label: Script/ETL
+  - value: Painel/visualização
+    label: Painel/visualização
+  - value: Relatório técnico
+    label: Relatório técnico
+  - value: Manual/Protocolo
+    label: Manual/Protocolo
+  - value: Produto de consultoria
+    label: Produto de consultoria
+
+- field_name: tag_string
+  label: Palavras-chave
+  preset: tag_string_autocomplete
+  form_placeholder: 'Ex.: manejo florestal, inventário, geoespacial'
+  help_text: Digite uma palavra-chave e pressione Enter para adicionar.
+
+- field_name: abrangencia
+  label: Abrangência territorial
+  form_snippet: select.html
+  display_snippet: select.html
+  choices:
+  - value: Nacional
+    label: Nacional
+  - value: Regional
+    label: Regional
+  - value: Estadual
+    label: Estadual
+  - value: Municipal
+    label: Municipal
+  - value: Bioma
+    label: Bioma
+  - value: Unidade Amostral IFN
+    label: Unidade Amostral IFN
+
+- field_name: referencia_geo
+  label: Referência geográfica
+  preset: multiple_checkbox
+  choices:
+  - value: Brasil
+    label: Brasil
+  - value: Norte
+    label: Norte
+  - value: Nordeste
+    label: Nordeste
+  - value: Centro-Oeste
+    label: Centro-Oeste
+  - value: Sudeste
+    label: Sudeste
+  - value: Sul
+    label: Sul
+  - value: AC
+    label: AC
+  - value: AL
+    label: AL
+  - value: AP
+    label: AP
+  - value: AM
+    label: AM
+  - value: BA
+    label: BA
+  - value: CE
+    label: CE
+  - value: DF
+    label: DF
+  - value: ES
+    label: ES
+  - value: GO
+    label: GO
+  - value: MA
+    label: MA
+  - value: MT
+    label: MT
+  - value: MS
+    label: MS
+  - value: MG
+    label: MG
+  - value: PA
+    label: PA
+  - value: PB
+    label: PB
+  - value: PR
+    label: PR
+  - value: PE
+    label: PE
+  - value: PI
+    label: PI
+  - value: RJ
+    label: RJ
+  - value: RN
+    label: RN
+  - value: RS
+    label: RS
+  - value: RO
+    label: RO
+  - value: RR
+    label: RR
+  - value: SC
+    label: SC
+  - value: SP
+    label: SP
+  - value: SE
+    label: SE
+  - value: TO
+    label: TO
+  - value: Amazônia
+    label: Amazônia
+  - value: Cerrado
+    label: Cerrado
+  - value: Caatinga
+    label: Caatinga
+  - value: Mata Atlântica
+    label: Mata Atlântica
+  - value: Pantanal
+    label: Pantanal
+  - value: Pampa
+    label: Pampa
+
+- field_name: doc_relacionado
+  label: Documento relacionado
+
+- field_name: numero_proc_sei
+  label: Número Processo SEI # Movido de resource_fields no ajuste E-19
+
+- field_name: numero_sei
+  label: Número Documento SEI # Movido de resource_fields no ajuste E-19
+
+- field_name: status_registro
+  label: Status do registro # Movido de resource_fields no ajuste E-19
+  preset: select
+  choices:
+    - value: em_elaboracao
+      label: Em elaboração
+    - value: em_revisao
+      label: Em revisão
+    - value: em_analise
+      label: Em análise
+    - value: finalizado
+      label: Finalizado
+    - value: publicado
+      label: Publicado
+
+- field_name: licenca_registro
+  label: Licença # Movido de resource_fields no ajuste E-19
+  form_snippet: select.html
+  display_snippet: select.html
+  choices:
+  - value: Documento para distribuição com atribuição de fonte (CC BT 4.0)
+    label: Documento para distribuição com atribuição de fonte (CC BT 4.0)
+  - value: Documento para distribuição sem modificações (CC BY-ND)
+    label: Documento para distribuição sem modificações (CC BY-ND)
+  - value: Base de dados para reutilização com atribuição (ODbL 1.0)
+    label: Base de dados para reutilização com atribuição (ODbL 1.0)
+  - value: Documento com sigilo ou dados sensíveis (Sem licença de distribuição)
+    label: Documento com sigilo ou dados sensíveis (Sem licença de distribuição)
+  - value: Material de domínio público
+    label: Material de domínio público
+
+
+- field_name: sfb_acesso
+  label: Acesso
+  form_snippet: select.html
+  display_snippet: select.html
+  validators: ignore_missing
+  choices:
+  - value: publico
+    label: Público
+  - value: interno
+    label: Interno
+  - value: privado
+    label: Privado
+  help_text: Define a visibilidade do registro no portal.
+
+- field_name: publico_alvo
+  label: Público-alvo principal
+
+- field_name: observacoes
+  label: Observações
+  form_snippet: markdown.html
+
+resource_fields:
+- field_name: name
+  label: Nome do recurso # Ajustado no E-19: manter no recurso, mas usar apenas quando diferir do título do registro
+  form_placeholder: Ex. Relatório anual do projeto X
+  validators: ignore_missing
+  help_text: Preencha apenas se este recurso precisar de nome próprio diferente do título do registro.
+
+- field_name: format
+  label: Formato do recurso
+  form_snippet: select.html
+  display_snippet: select.html
+  choices:
+  - value: PDF
+    label: PDF
+  - value: CSV
+    label: CSV
+  - value: XLSX
+    label: XLSX
+  - value: DOCX
+    label: DOCX
+  - value: PPTX
+    label: PPTX
+  - value: SHP
+    label: SHP
+  - value: GDB
+    label: GDB
+  - value: GEOJSON
+    label: GEOJSON
+  - value: JSON
+    label: JSON
+  - value: SQL
+    label: SQL
+  - value: PY
+    label: PY
+  - value: R
+    label: R
+  - value: JPG
+    label: JPG
+  - value: PNG
+    label: PNG
+  - value: MP4
+    label: MP4
+
+- field_name: description
+  label: Descrição do recurso # Ajustado no E-19: usar apenas quando diferir da descrição geral do registro
+  form_placeholder: Descrição do recurso a ser anexado
+  form_snippet: markdown.html
+  validators: ignore_missing
+  help_text: Preencha apenas se este recurso tiver informação específica diferente da descrição geral do registro.
+
+- field_name: url
+  label: URL
+  preset: resource_url_upload
+
+- field_name: data_criacao
+  label: Data de criação
+
+- field_name: data_atualizacao
+  label: Data da última atualização
+
+- field_name: versao
+  label: Versão
+
+- field_name: plataforma_origem
+  label: Plataforma de origem
+  form_snippet: select.html
+  display_snippet: select.html
+  choices:
+  - value: ArcGIS Enterprise
+    label: ArcGIS Enterprise
+  - value: ArcGIS Online
+    label: ArcGIS Online
+  - value: Serviço ArcGIS (Map/Feature Service)
+    label: Serviço ArcGIS (Map/Feature Service)
+  - value: Geodatabase (GDB) institucional
+    label: Geodatabase (GDB) institucional
+  - value: Portal/Servidor de mapas (GeoServer/OGC)
+    label: Portal/Servidor de mapas (GeoServer/OGC)
+  - value: Banco SQL (transacional)
+    label: Banco SQL (transacional)
+  - value: PostgreSQL/PostGIS (analítico)
+    label: PostgreSQL/PostGIS (analítico)
+  - value: ETL/DAG (pipeline/automação)
+    label: ETL/DAG (pipeline/automação)
+  - value: SharePoint/Teams (Microsoft 365)
+    label: SharePoint/Teams (Microsoft 365)
+  - value: OneDrive institucional
+    label: OneDrive institucional
+  - value: Servidor/Drive de rede SFB
+    label: Servidor/Drive de rede SFB
+  - value: GitLab/Git (repositório de código)
+    label: GitLab/Git (repositório de código)
+  - value: Ferramenta BI/Painel (Power BI ou similar)
+    label: Ferramenta BI/Painel (Power BI ou similar)
+  - value: CKAN (catálogo)
+    label: CKAN (catálogo)
+
+- field_name: obs_origem
+  label: Observação sobre o arquivo na origem
+  form_snippet: markdown.html
+
+# - field_name: numero_proc_sei
+#   label: Número Processo SEI # Movido para dataset_fields no ajuste E-19
+
+# - field_name: numero_sei
+#   label: Número Documento SEI # Movido para dataset_fields no ajuste E-19
+
+# - field_name: status_registro
+#   label: Status do registro # Movido para dataset_fields no ajuste E-19
+
+# - field_name: licenca_registro
+#   label: Licença # Movido para dataset_fields no ajuste E-19

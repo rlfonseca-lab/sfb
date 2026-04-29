@@ -1,0 +1,25 @@
+{
+  "scheming_presets_version": 1,
+  "about": "Presets customizados (SFB)",
+  "presets": [
+    {
+      "preset_name": "sfb_visibility",
+      "values": {
+        "form_snippet": "select.html",
+        "display_snippet": "select.html",
+        "validators": "ignore_missing",
+        "choices": [
+          { "value": "public", "label": "Público" },
+          { "value": "restricted", "label": "Restrito" }
+        ]
+      }
+    },
+    {
+      "preset_name": "resource_name",
+      "values": {
+        "form_snippet": "text.html",
+        "validators": "ignore_missing unicode_safe"
+      }
+    }
+  ]
+}

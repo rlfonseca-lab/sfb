@@ -1,0 +1,289 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: CKAN UI override\n"
+"Language: pt_BR\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ckan/lib/mailer.py:238 ckan/templates/home/snippets/stats.html:23
+msgid "group"
+msgstr "projeto"
+
+#: ckan/logic/converters.py:195 ckan/logic/validators.py:334
+#: ckan/views/group.py:1044
+#: ckanext/stats/templates/ckanext/stats/index.html:91
+msgid "Group"
+msgstr "Projeto"
+
+#: ckan/logic/validators.py:344
+msgid "That group name or ID does not exist."
+msgstr "Esse nome ou ID de projeto não existe."
+
+#: ckan/logic/validators.py:464
+msgid "Group name already exists in database"
+msgstr "Nome do projeto já existe na base de dados"
+
+#: ckan/logic/action/create.py:883
+msgid "Trying to create an organization as a group"
+msgstr "Tentando criar uma organização como um projeto"
+
+#: ckan/logic/action/create.py:1369 ckan/views/dataset.py:1047
+#: ckan/views/dataset.py:1064 ckan/views/feed.py:208 ckan/views/group.py:406
+#: ckan/views/group.py:441 ckan/views/group.py:517 ckan/views/group.py:572
+#: ckan/views/group.py:725 ckan/views/group.py:864 ckan/views/group.py:939
+#: ckan/views/group.py:964 ckan/views/group.py:988 ckan/views/group.py:1050
+#: ckan/views/group.py:1128 ckanext/activity/views.py:520
+msgid "Group not found"
+msgstr "Projeto não encontrado"
+
+#: ckan/logic/action/create.py:1454 ckan/logic/action/create.py:1461
+msgid "You must be logged in to follow a group."
+msgstr "Você precisa estar autenticado para seguir um projeto."
+
+#: ckan/logic/auth/create.py:36 ckan/logic/auth/update.py:57
+#, python-format
+msgid "User %s not authorized to edit these groups"
+msgstr "Usuário %s não autorizado a editar esses projetos"
+
+#: ckan/logic/auth/create.py:139
+#, python-format
+msgid "User %s not authorized to create groups"
+msgstr "Usuário %s não autorizado a criar projetos"
+
+#: ckan/logic/auth/create.py:207
+msgid "Group was not found."
+msgstr "Projeto não foi encontrado."
+
+#: ckan/logic/auth/create.py:268 ckan/logic/auth/update.py:136
+#, python-format
+msgid "User %s not authorized to edit group %s"
+msgstr "Usuário %s não autorizado a editar o projeto %s"
+
+#: ckan/logic/auth/delete.py:87
+#, python-format
+msgid "User %s not authorized to delete groups"
+msgstr "Usuário %s não está autorizado a excluir projetos"
+
+#: ckan/logic/auth/delete.py:91
+#, python-format
+msgid "User %s not authorized to delete group %s"
+msgstr "Usuário %s não autorizado a excluir o projeto %s"
+
+#: ckan/logic/auth/get.py:183
+#, python-format
+msgid "User %s not authorized to read group %s"
+msgstr "Usuário(a) %s não está autorizado(a) a ler o projeto %s"
+
+#: ckan/logic/auth/update.py:166
+#, python-format
+msgid "User %s not authorized to change state of group %s"
+msgstr "Usuário %s não autorizado a alterar o estado do projeto %s"
+
+#: ckan/logic/auth/update.py:183
+#, python-format
+msgid "User %s not authorized to edit permissions of group %s"
+msgstr "Usuário %s não autorizado a editar as permissões do projeto %s"
+
+#: ckan/templates/group/edit.html:4 ckan/templates/group/edit_base.html:4
+#: ckan/templates/group/index.html:4 ckan/templates/group/index.html:7
+#: ckan/templates/group/index.html:19 ckan/templates/group/members.html:3
+#: ckan/templates/group/new.html:12 ckan/templates/group/read_base.html:4
+#: ckan/templates/group/read_base.html:7 ckan/templates/header.html:106
+#: ckan/templates/package/group_list.html:7
+#: ckan/templates/package/read_base.html:22 ckan/views/dataset.py:295
+#: ckan/views/group.py:304 ckan/views/home.py:70
+msgid "Groups"
+msgstr "Projetos"
+
+#: ckan/templates/group/base_form_page.html:7
+msgid "Group Form"
+msgstr "Formulário Projeto"
+
+#: ckan/templates/group/confirm_delete.html:11
+msgid "Are you sure you want to delete group - {name}?"
+msgstr "Você tem certeza de que deseja apagar este projeto - {name}?"
+
+#: ckan/templates/group/edit.html:12
+msgid "Edit Group"
+msgstr "Editar Projeto"
+
+#: ckan/templates/group/index.html:14
+#: ckan/templates/user/dashboard_groups.html:7
+msgid "Add Group"
+msgstr "Adicionar Projeto"
+
+#: ckan/templates/group/index.html:21
+msgid "Search groups..."
+msgstr "Buscar projetos..."
+
+#: ckan/templates/group/index.html:30
+msgid "There are currently no groups for this site"
+msgstr "Atualmente não há projetos neste sítio"
+
+#: ckan/templates/group/member_new.html:94
+msgid ""
+"<p><strong>Admin:</strong> Can edit group information, as well as manage "
+"organization members.</p> <p><strong>Member:</strong> Can add/remove "
+"datasets from groups</p>"
+msgstr ""
+"<p><strong>Administrador:</strong> Pode editar informações do projeto, bem "
+"como gerenciar os membros da organização.</p> <p><strong>Membro:</strong> "
+"Pode adicionar ou remover conjuntos de dados dos projetos</p>"
+
+#: ckan/templates/group/new.html:3
+msgid "Create a Group"
+msgstr "Criar um Projeto"
+
+#: ckan/templates/group/new_group_form.html:17
+msgid "Update Group"
+msgstr "Atualizar Projeto"
+
+#: ckan/templates/group/new_group_form.html:19
+msgid "Create Group"
+msgstr "Criar Projeto"
+
+#: ckan/templates/group/snippets/feeds.html:2
+msgid "Datasets in group: {group}"
+msgstr "Conjuntos de dados no projeto: {group}"
+
+#: ckan/templates/group/snippets/group_form.html:12
+msgid "My Group"
+msgstr "Meu Projeto"
+
+#: ckan/templates/group/snippets/group_form.html:22
+msgid "A little information about my group..."
+msgstr "Um pouco de informações sobre o meu projeto..."
+
+#: ckan/templates/group/snippets/group_form.html:40
+msgid "Are you sure you want to delete this Group?"
+msgstr "Você tem certeza de que deseja apagar este Projeto?"
+
+#: ckan/templates/group/snippets/group_form.html:43
+msgid "Save Group"
+msgstr "Salvar Projeto"
+
+#: ckan/templates/group/snippets/group_item.html:43
+msgid "Remove dataset from this group"
+msgstr "Remover conjunto de dados deste projeto"
+
+#: ckan/templates/group/snippets/helper.html:15
+msgid "What are Groups?"
+msgstr "O que são projetos?"
+
+#: ckan/templates/group/snippets/helper.html:19
+msgid ""
+"You can use CKAN Groups to create and manage collections of datasets. This "
+"could be to catalogue datasets for a particular project or team, or on a "
+"particular theme, or as a very simple way to help people find and search "
+"your own published datasets."
+msgstr ""
+"Você pode usar Projetos do CKAN para criar e gerenciar coleções de conjuntos"
+" de dados. Isso pode ser feito para catalogar conjuntos de dados de um "
+"projeto ou time particular, ou em um tema particular, ou como uma forma "
+"simples de ajudar as pessoas a encontrar e buscar seus próprios conjuntos de"
+" dados."
+
+#: ckan/templates/home/snippets/stats.html:23
+msgid "groups"
+msgstr "projetos"
+
+#: ckan/templates/package/group_list.html:17
+msgid "Associate this group with this dataset"
+msgstr "Associar este projeto a este conjunto de dados"
+
+#: ckan/templates/package/group_list.html:17
+msgid "Add to group"
+msgstr "Adicionar ao projeto"
+
+#: ckan/templates/package/group_list.html:27
+msgid "There are no groups associated with this dataset"
+msgstr "Não há projetos associados a este conjunto de dados"
+
+#: ckan/templates/snippets/search_result_text.html:21
+msgid "{number} group found for \"{query}\""
+msgid_plural "{number} groups found for \"{query}\""
+msgstr[0] "{number} projeto encontrado para \"{query}\""
+msgstr[1] "{number} projetos encontrados para \"{query}\""
+msgstr[2] "{number} projetos encontrados para \"{query}\""
+
+#: ckan/templates/snippets/search_result_text.html:22
+msgid "No groups found for \"{query}\""
+msgstr "Não foram encontrados projetos para \"{query}\""
+
+#: ckan/templates/snippets/search_result_text.html:23
+msgid "{number} group found"
+msgid_plural "{number} groups found"
+msgstr[0] "{number} projeto encontrado"
+msgstr[1] "{number} projetos encontrados"
+msgstr[2] "{number} projetos encontrados"
+
+#: ckan/templates/snippets/search_result_text.html:24
+msgid "No groups found"
+msgstr "Não foram encontrados projetos"
+
+#: ckan/templates/user/dashboard.html:27
+#: ckan/templates/user/dashboard_groups.html:12
+msgid "My Groups"
+msgstr "Meus projetos"
+
+#: ckan/templates/user/dashboard_groups.html:20
+msgid "You are not a member of any groups."
+msgstr "Você não é membro de nenhum projeto."
+
+#: ckan/templates/user/new.html:28
+msgid "Create datasets, groups and other exciting things"
+msgstr "Crie conjuntos de dados, projetos e outras coisas interessantes"
+
+#: ckan/views/group.py:554 ckan/views/group.py:570
+#, python-format
+msgid "Unauthorized to delete group %s members"
+msgstr "Não autorizado a excluir membros do projeto %s"
+
+#: ckan/views/group.py:565
+msgid "Group member has been deleted."
+msgstr "Membro foi excluído do projeto"
+
+#: ckan/views/group.py:842 ckan/views/group.py:937
+msgid "Unauthorized to create a group"
+msgstr "Não autorizado a criar um projeto"
+
+#: ckan/views/group.py:1030 ckan/views/group.py:1048
+#, python-format
+msgid "Unauthorized to delete group %s"
+msgstr "Não autorizado a excluir o projeto %s"
+
+#: ckan/views/group.py:1126
+#, python-format
+msgid "Unauthorized to add member to group %s"
+msgstr "Não autorizado a adicionar membro ao projeto %s"
+
+#: ckanext/activity/templates/snippets/activities/changed_group.html:6
+msgid "{actor} updated the group {group}"
+msgstr "{actor} atualizou o projeto {group}"
+
+#: ckanext/activity/templates/snippets/activities/deleted_group.html:6
+msgid "{actor} deleted the group {group}"
+msgstr "{actor} excluiu o projeto {group}"
+
+#: ckanext/activity/templates/snippets/activities/new_group.html:6
+msgid "{actor} created the group {group}"
+msgstr "{actor} criou o projeto {group}"
+
+#: ckanext/example_theme_docs/v10_custom_snippet/templates/snippets/example_theme_most_popular_groups.html:20
+#: ckanext/example_theme_docs/v11_HTML_and_CSS/templates/snippets/example_theme_most_popular_groups.html:19
+msgid "This group has no description"
+msgstr "Este projeto está sem descrição"
+
+#: ckanext/reclineview/theme/templates/recline_graph_form.html:7
+msgid "Group (Axis 1)"
+msgstr "Projeto (Eixo 1)"
+
+#: ckanext/stats/templates/ckanext/stats/index.html:86
+#: ckanext/stats/templates/ckanext/stats/index.html:167
+msgid "Largest Groups"
+msgstr "Maiores Projetos"
+
+#: ckanext/stats/templates/ckanext/stats/index.html:109
+msgid "No groups"
+msgstr "Sem projetos"

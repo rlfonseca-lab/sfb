@@ -1,0 +1,13 @@
+{% ckan_extends %}
+
+{% block page_primary_action %}
+  {{ super() }}
+
+  {# Só aparece para quem pode gerenciar membros da organização #}
+  {% if h.check_access('organization_member_create', {'id': group_dict.id}) %}
+    <a class="btn btn-outline-primary ms-2"
+       href="/organization/member_new/{{ group_dict.name }}">
+      Adicionar usuário
+    </a>
+  {% endif %}
+{% endblock %}

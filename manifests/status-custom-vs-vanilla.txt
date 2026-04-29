@@ -1,0 +1,35 @@
+ M etc/ckan/ckan.ini
+ M etc/nginx/sites-available/ckan
+ M usr/lib/ckan/ckan/ckan/public/base/images/ckan-logo.png
+ M usr/lib/ckan/ckan/ckan/templates/home/snippets/promoted.html
+ M usr/lib/ckan/ckan/ckan/templates/package/snippets/package_basic_fields.html
+?? etc/ckan/ckan.ini.bak.2026-02-08_182458
+?? etc/ckan/ckan.ini.bak.2026-02-23_163719
+?? etc/ckan/ckan.ini.bak.2026-02-23_164648
+?? etc/ckan/ckan.ini.bak.2026-02-23_174347
+?? etc/ckan/ckan.ini.bak.2026-02-23_180825
+?? etc/ckan/ckan.ini.bak.2026-03-04_184009
+?? etc/ckan/ckan.ini.bak.2026-03-04_185244
+?? etc/ckan/ckan.ini.bak.2026-03-04_192207
+?? etc/ckan/ckan.ini.bak.2026-03-04_193117
+?? etc/ckan/ckan.ini.bak.2026-03-04_195105
+?? etc/ckan/ckan.ini.bak.2026-03-04_203858
+?? etc/ckan/ckan.ini.bak.2026-03-18_14-45-17
+?? etc/ckan/ckan.ini.bak_2026-02-10_144946
+?? etc/ckan/ckan.ini.bkp_20260406_133849
+?? etc/ckan/ckan.ini2026-04-22_14-45-01.bak
+?? etc/ckan/ckan.ini2026-04-22_15-56-39.bak
+?? etc/ckan/custom/
+?? etc/ckan/public/
+?? etc/ckan/schemas/
+?? etc/nginx/sites-available/ckan.bak.2026-04-21_13-55-50
+?? etc/nginx/sites-available/ckan.bkp_20260406_133849
+?? etc/nginx/sites-available/ckan.bkp_20260406_135211
+?? etc/nginx/sites-available/ckan.bkp_20260406_135315
+?? etc/systemd/system/ckan.service.d/
+?? etc/systemd/system/solr.service
+?? opt/
+?? usr/lib/ckan/ckan/ckan/public/base/images/ckan-logo.png.BKP
+?? usr/lib/ckan/ckan/ckan/templates/package/snippets/package_basic_fields.html.2026-02-23.bkp
+?? usr/lib/ckan/ckan/ckan/templates/package/snippets/package_basic_fields.html.bak_2026-02-10
+?? usr/lib/ckan/venv/

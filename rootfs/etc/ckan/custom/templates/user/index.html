@@ -1,0 +1,12 @@
+{% ckan_extends %}
+
+{# Botão “Criar usuário” só para sysadmin #}
+{% block page_primary_action %}
+  {{ super() }}
+  {% if c.userobj and c.userobj.sysadmin %}
+    <a class="btn btn-primary" href="/user/register">
+      <i class="fa fa-user-plus" aria-hidden="true"></i>
+      Criar usuário
+    </a>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,6 @@
+ etc/ckan/ckan.ini                                  |  47 +++++++++++++--------
+ etc/nginx/sites-available/ckan                     |  14 +++---
+ .../ckan/ckan/public/base/images/ckan-logo.png     | Bin 626 -> 17431 bytes
+ .../ckan/templates/home/snippets/promoted.html     |  12 +-----
+ .../package/snippets/package_basic_fields.html     |  10 ++---
+ 5 files changed, 45 insertions(+), 38 deletions(-)

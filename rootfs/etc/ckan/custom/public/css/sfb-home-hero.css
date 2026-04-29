@@ -1,0 +1,233 @@
+html, body { overflow-x: hidden !important; }
+
+/* HERO: full-bleed sem depender de .homepage */
+.sfb-hero{
+  position: relative !important;
+  width: 100vw !important;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  overflow: hidden !important;
+
+  min-height: 420px;
+  padding: 72px 0 56px;
+
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+
+  color: #fff !important;
+}
+
+/* Overlay MAIS verde */
+.sfb-hero::before{
+  content:"";
+  position:absolute; inset:0;
+  background: rgba(122, 193, 67, 0.72) !important;
+  backdrop-filter: saturate(1.18) contrast(1.05);
+}
+
+.sfb-hero .container{
+  position: relative;
+  z-index: 1;
+}
+
+.sfb-hero__title{
+  color: #fff !important;
+  font-size: 44px;
+  line-height: 1.1;
+  margin: 0 0 10px;
+  font-weight: 700;
+  text-shadow: 0 2px 12px rgba(0,0,0,.35);
+}
+
+.sfb-hero__subtitle{
+  color: #fff !important;
+  font-size: 18px;
+  opacity: .95;
+  margin: 0 0 26px;
+  max-width: 920px;
+  text-shadow: 0 2px 12px rgba(0,0,0,.30);
+}
+
+/* CAROUSEL */
+.sfb-carousel{
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  overflow: hidden;
+}
+
+.sfb-carousel__track{
+  display: flex;
+  width: 100%;
+  transition: transform 260ms ease;
+  will-change: transform;
+}
+
+.sfb-carousel__slide{
+  box-sizing: border-box;
+  flex: 0 0 100%;
+  min-width: 100%;
+  max-width: 100%;
+  width: 100%;
+  padding: 0;
+}
+
+/* SEARCH BOX */
+.sfb-searchbox{
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  background: #fff !important;
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.18);
+}
+
+.sfb-searchbox form{ margin: 0; }
+
+.sfb-searchbox__row{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.sfb-searchbox input[type="text"]{
+  flex: 1;
+  height: 58px;
+  font-size: 20px;
+  padding: 0 18px;
+  border: 1px solid rgba(0,0,0,.18);
+  border-radius: 6px;
+}
+
+.sfb-searchbox button{
+  height: 58px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* NAV */
+.sfb-carousel__nav{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.sfb-dot{
+  width: 10px; height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.7);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sfb-dot.is-active{ background: rgba(255,255,255,.9); }
+
+.sfb-carousel__btn{
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px){
+  .sfb-hero__title{ font-size: 34px; }
+  .sfb-searchbox__row{ flex-direction: column; align-items: stretch; }
+  .sfb-searchbox button{ width: 100%; }
+}
+
+/* Center fix: mantém o bloco do carrossel centralizado */
+.sfb-carousel{
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* (opcional, mas geralmente fica melhor) centraliza o seletor */
+.sfb-carousel__nav{
+  justify-content: center !important;
+}
+
+/* Slide 1: box transparente (input pousa na imagem) */
+.sfb-searchbox--transparent{
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* Corrige “margem direita”/borda não visível e deixa look openAfrica */
+.sfb-searchbox--transparent .sfb-searchbox__row{
+  gap: 0 !important;
+}
+
+.sfb-searchbox--transparent input[type="text"]{
+  background: rgba(255,255,255,.92) !important;
+  border: 1px solid rgba(255,255,255,.80) !important;
+  border-right: 0 !important;
+  border-radius: 8px 0 0 8px !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,.18);
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.sfb-searchbox--transparent button{
+  background: rgba(255,255,255,.92) !important;
+  border: 1px solid rgba(255,255,255,.80) !important;
+  border-left: 0 !important;
+  border-radius: 0 8px 8px 0 !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,.18);
+}
+
+/* FIX truncamento à direita (slide 1): input não pode ser width:100% num flex com botão */
+.sfb-searchbox--transparent .sfb-searchbox__row{
+  width: 100% !important;
+}
+
+.sfb-searchbox--transparent input[type="text"]{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;   /* permite encolher sem “estourar” */
+  width: auto !important;    /* remove o 100% que causava overflow */
+}
+
+.sfb-searchbox--transparent button{
+  flex: 0 0 64px !important; /* botão “fixo” no fim */
+  width: 64px !important;
+}
+
+/* FIX definitivo do truncamento: botão tinha width fixa + padding herdado */
+.sfb-searchbox--transparent button{
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+/* FIX definitivo: o input não pode ocupar 100% num flex com botão.
+   flex-basis 0 + width 0 garantem que o botão sempre “cabe” no final. */
+.sfb-searchbox--transparent .sfb-searchbox__row{
+  display: flex !important;
+  width: 100% !important;
+}
+
+.sfb-searchbox--transparent input[type="text"]{
+  flex: 1 1 0% !important;
+  width: 0 !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+.sfb-searchbox--transparent button{
+  flex: 0 0 64px !important;
+  width: 64px !important;
+}

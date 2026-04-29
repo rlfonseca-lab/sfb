@@ -1,0 +1,21 @@
+{% ckan_extends %}
+
+{% block content_action %}
+  {{ super() }}
+
+  {% link_for _('Membros'),
+    named_route=group_type ~ '.members',
+    id=group_dict.name,
+    class_='btn btn-secondary',
+    icon='users'
+  %}
+
+  {% if h.check_access('group_member_create', {'id': group_dict.id}) %}
+    {% link_for _('Adicionar membro'),
+      named_route=group_type ~ '.member_new',
+      id=group_dict.name,
+      class_='btn btn-primary',
+      icon='user-plus'
+    %}
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,2 @@
+---------- PLUGINS ATIVOS ----------
+169:ckan.plugins = activity scheming_datasets sfb_facets_multi sfb_geo_facet sfb_access sfb_group_sync sfbgroups sfb_drafts_search

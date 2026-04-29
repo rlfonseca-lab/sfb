@@ -1,0 +1,62 @@
+{% extends "page.html" %}
+
+{% block secondary %}{% endblock %}
+
+{% block primary %}
+  <div class="primary col-12">
+    {{ self.primary_content() }}
+  </div>
+{% endblock %}
+
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ h.url_for_static('/css/sfb-home-hero.css') }}">
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script defer src="{{ h.url_for_static('/js/sfb-home-carousel.js') }}"></script>
+{% endblock %}
+
+{% block primary_content %}
+  {% set dataset_type = h.default_package_type() %}
+
+  <section class="sfb-hero" style="background-image:url('{{ h.url_for_static('/img/home-hero.jpg') }}')">
+    <div class="container">
+      <h1 class="sfb-hero__title">Seja bem vindo ao repositório do Serviço Florestal Brasileiro.</h1>
+      <p class="sfb-hero__subtitle">Use o formulário abaixo para procurar por documentos disponibilizados, ou clique em <b>Busca avançada</b> para acessar o filtro com mais opções.</p>
+
+        <div class="sfb-carousel" data-sfb-carousel>
+        <div class="sfb-carousel__nav">
+          <button type="button" class="sfb-carousel__btn" data-sfb-prev>&larr;</button>
+          <button type="button" class="sfb-dot is-active" data-sfb-dot aria-label="Busca simples"></button>
+          <button type="button" class="sfb-dot" data-sfb-dot aria-label="Busca avançada"></button>
+          <button type="button" class="sfb-carousel__btn" data-sfb-next>&rarr;</button>
+        </div>
+        <div class="sfb-carousel__track">
+
+          <div class="sfb-carousel__slide">
+            <div class="sfb-searchbox sfb-searchbox--transparent">
+              <form action="{{ h.url_for(dataset_type ~ '.search') }}" method="get">
+                <div class="sfb-searchbox__row">
+                  <input type="text" name="q" value="{{ request.args.get('q','') }}"
+                         placeholder="Buscar registros por qualquer termo" aria-label="Busca simples">
+                  <button type="submit">Buscar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="sfb-carousel__slide">
+            <div class="sfb-searchbox">
+              {# AQUI entra seu formulário atual, sem colar nada #}
+              {% snippet 'home/snippets/search.html' %}
+            </div>
+          </div>
+
+        </div>
+        </div>
+      </div>
+    </section>
+{% endblock %}

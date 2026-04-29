@@ -1,0 +1,47 @@
+{% ckan_extends %}
+
+{% block form %}
+  {% set facet_titles = facet_titles or {} %}
+  {% set my_titles = {
+    'extras_acesso': _('Acesso'),
+    'extras_escopo': _('Escopo'),
+    'extras_abrangencia': _('Abrangência'),
+    'extras_fonte': _('Fonte'),
+    'extras_grupo': _('Grupo'),
+    'extras_temas': _('Temas'),
+    'extras_projeto_nome': _('Projeto'),
+    'extras_referencia_geo': _('Referência Geográfica'),
+    'extras_sistema_relacionado': _('Sistema Relacionado'),
+    'extras_etiquetas': _('Etiquetas'),
+    'extras_numero_sei': _('Número SEI'),
+    'extras_id_origem': _('Identificador na origem'),
+    'extras_doc_relacionado': _('Documento relacionado'),
+    'extras_doc_futuro': _('Documento futuro'),
+    'extras_data_criacao': _('Data de criação'),
+    'extras_data_atualizacao': _('Data da última atualização'),
+    'extras_validade': _('Validade')
+  } %}
+
+  {% for k, v in my_titles.items() %}
+    {% set _x = facet_titles.update({k: v}) %}
+  {% endfor %}
+
+  {% set facets = {
+    'fields': fields_grouped,
+    'search': search_facets,
+    'titles': facet_titles,
+    'translated_fields': translated_fields,
+    'remove_field': remove_field
+  } %}
+
+  {% snippet 'snippets/search_form.html',
+    type='dataset',
+    query=q,
+    sorting=sorting,
+    sorting_selected=sort_by_selected,
+    count=page.item_count,
+    facets=facets,
+    show_empty=request.args,
+    error=query_error
+  %}
+{% endblock %}

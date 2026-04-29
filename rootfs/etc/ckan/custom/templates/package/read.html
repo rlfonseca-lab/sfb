@@ -1,0 +1,39 @@
+{% ckan_extends %}
+
+{% block package_description %}
+  {% set _mode = h.sfb_access_mode(pkg) %}
+
+  {% if _mode == 'INTERNO' %}
+    <span class="dataset-private badge badge-warning pull-right">
+      <i class="fa fa-lock"></i>
+      Interno
+    </span>
+  {% elif _mode == 'PRIVADO' %}
+    <span class="dataset-private badge badge-danger pull-right">
+      <i class="fa fa-lock"></i>
+      Privado
+    </span>
+  {% endif %}
+
+  <h1>
+    {% block page_heading %}
+      {{ h.dataset_display_name(pkg) }}
+      {% if pkg.state.startswith('draft') %}
+        [{{ _('Draft') }}]
+      {% endif %}
+      {% if pkg.state == 'deleted' %}
+        [{{ _('Deleted') }}]
+      {% endif %}
+    {% endblock %}
+  </h1>
+
+  {% block package_notes %}
+    {% if pkg.notes %}
+      <div class="notes embedded-content">
+        {{ h.render_markdown(h.get_translated(pkg, 'notes')) }}
+      </div>
+    {% endif %}
+  {% endblock %}
+
+  <span class="insert-comment-thread"></span>
+{% endblock %}

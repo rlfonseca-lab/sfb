@@ -1,0 +1,19 @@
+{% set intro = g.site_intro_text %}
+
+<div class="module-promotion card box">
+  <div>
+    {% if intro %}
+      {{ h.render_markdown(intro) }}
+    {% else %}
+      <h1 class="page-heading">Bem vindo ao repositório do SFB</h1>
+      <p>
+         Lorem ipsum dolor sit amet, consectetur adipiscing elitamet nunc consequat aliquip nunc ut quis duis quis amet in, harmud nisi ut ullamco voluptate elit magna consequat commodo tempuribud velaliquam quis esse, voluptate harmud pulvinar eu. Sit pariatur amet. Elit ea dignissim tempuribud dolore ut aliquip pariatur nulla fugiat nunc doming doming ut nostrud, ultricies eu sint ullamco tempuribud pariatur amet. Ex ullamco quis sit voluptate harmud sint quis urna amet dignissim nulla. Fugiat pariatur ex consectetur, quis ultricies voluptate velaliquam nisi pulvinar amet ea ea quis quis consequat pariatur, sed nunc nostrud tempuribud. Nulla laboris harmud nisi quis dolore eu esse laboris sunt consectetur velaliquam esse laboris amet. Pulvinar quis nunc.
+      </p>
+    {% endif %}
+  </div>
+
+  {% block home_image %}
+    <section class="featured media-overlay hidden-xs">
+    </section>
+  {% endblock %}
+</div>

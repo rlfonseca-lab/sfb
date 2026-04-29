@@ -1,0 +1,58 @@
+{% ckan_extends %}
+
+{%- set exclude_fields = [
+  'id',
+  'title',
+  'name',
+  'notes',
+  'tag_string',
+  'license_id',
+  'owner_org'
+] -%}
+
+{% block package_additional_info %}
+  {%- for field in schema.dataset_fields -%}
+    {%- if field.field_name not in exclude_fields
+          and field.display_snippet is not none
+          and field.field_name in pkg_dict -%}
+
+      {%- set raw_value = pkg_dict[field.field_name] -%}
+      {%- set raw_empty = (
+        raw_value is none
+        or raw_value == ''
+        or raw_value == []
+        or raw_value == {}
+      ) -%}
+
+      {%- if not raw_empty -%}
+        {% set rendered_value -%}
+          {%- snippet 'scheming/snippets/display_field.html',
+            field=field,
+            data=pkg_dict,
+            schema=schema
+          -%}
+        {%- endset %}
+
+        {%- set rendered_value = rendered_value | trim -%}
+
+        {%- if rendered_value and rendered_value not in ['[]', '{}', 'None', 'null'] -%}
+          <tr>
+            <th scope="row" class="dataset-label">
+              {{ h.scheming_language_text(field.label) }}
+            </th>
+            <td class="dataset-details">
+              {{ rendered_value | safe }}
+            </td>
+          </tr>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {% if h.check_access('package_update', {'id': pkg_dict.id}) %}
+    <tr>
+      <th scope="row" class="dataset-label">{{ _("State") }}</th>
+      <td class="dataset-details">{{ _(pkg_dict.state) }}</td>
+    </tr>
+  {% endif %}
+{% endblock %}
