@@ -5,27 +5,45 @@ umask 022
 # ============================================================
 # SCRIPT ÚNICO: CKAN SFB FULL EM DOCKER
 # CKAN 2.10.7 EXATO + PostgreSQL + Redis + Solr + Nginx + Certbot
-# Ajuste 2026-05-03: preserva /etc/ckan da imagem, valida rootfs/ do Git e gera .dockerignore.
 # ============================================================
 
 SCRIPT_PATH="$(readlink -f "$0")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
-SCRIPT_BASE="$(basename "$SCRIPT_PATH" .sh)"
-VARS_FILE="${1:-${SCRIPT_DIR}/${SCRIPT_BASE}.vars}"
+SCRIPT_BASE="install_ckan_sfb_docker_full"
+VARS_FILE="${SCRIPT_DIR}/install_ckan_sfb_docker_full.vars"
+SECRETS_FILE="${SCRIPT_DIR}/install_ckan_sfb_docker_full.secrets"
 
 if [[ "$(id -u)" -ne 0 ]]; then
-  echo "ERRO: rode este script como root. Exemplo: sudo ./${SCRIPT_BASE}.sh"
+  echo "ERRO: rode este script como root. Exemplo: sudo ./install_ckan_sfb_docker_full.sh"
+  exit 1
+fi
+
+if [[ "$#" -gt 0 ]]; then
+  echo "ERRO: este script não aceita parâmetros."
+  echo "Coloque os arquivos abaixo no mesmo diretório do .sh:"
+  echo "  - install_ckan_sfb_docker_full.vars"
+  echo "  - install_ckan_sfb_docker_full.secrets"
   exit 1
 fi
 
 if [[ ! -f "$VARS_FILE" ]]; then
   echo "ERRO: arquivo de variáveis não encontrado: $VARS_FILE"
-  echo "Esperado, por padrão: ${SCRIPT_DIR}/${SCRIPT_BASE}.vars"
+  echo "Esperado: ${SCRIPT_DIR}/install_ckan_sfb_docker_full.vars"
   exit 1
 fi
 
+if [[ ! -f "$SECRETS_FILE" ]]; then
+  echo "ERRO: arquivo de segredos não encontrado: $SECRETS_FILE"
+  echo "Esperado: ${SCRIPT_DIR}/install_ckan_sfb_docker_full.secrets"
+  exit 1
+fi
+
+chmod 600 "$SECRETS_FILE" 2>/dev/null || true
+
 # shellcheck disable=SC1090
 source "$VARS_FILE"
+# shellcheck disable=SC1090
+source "$SECRETS_FILE"
 
 STAMP="$(date +%F_%H-%M-%S)"
 LOG_DIR="${LOG_DIR:-/var/log/ckan-sfb-docker-install}"
@@ -41,9 +59,10 @@ SOLR_BUILD_DIR="$PROJECT_DIR/solr"
 NGINX_DIR="$PROJECT_DIR/nginx"
 CERTBOT_WWW_DIR="$PROJECT_DIR/certbot-www"
 LETSENCRYPT_DIR="$PROJECT_DIR/letsencrypt"
+CKAN_CONFIG_DIR="$PROJECT_DIR/ckan-config"
+PROJECT_SECRETS_DIR="$PROJECT_DIR/secrets"
 COMPOSE_FILE="$PROJECT_DIR/docker-compose.yml"
 ENV_FILE="$PROJECT_DIR/.env"
-DOCKERIGNORE_FILE="$PROJECT_DIR/.dockerignore"
 
 SITE_SCHEME="http"
 if [[ "${ENABLE_HTTPS,,}" == "true" ]]; then
@@ -56,7 +75,7 @@ exec > >(tee -a "$LOG_FILE") 2>&1
 
 trap 'rc=$?; echo; echo "ERRO: falha na linha ${LINENO}. Código: ${rc}"; echo "Log: ${LOG_FILE}"; exit ${rc}' ERR
 
-TOTAL=25
+TOTAL=26
 
 step() {
   echo
@@ -76,6 +95,34 @@ require_var() {
   [[ -n "$value" ]] || fail "variável obrigatória vazia ou ausente: $name"
 }
 
+require_secret_var() {
+  local name="$1"
+  local value="${!name:-}"
+  [[ -n "$value" ]] || fail "segredo obrigatório vazio ou ausente no arquivo .secrets: $name"
+}
+
+write_one_secret_file() {
+  local var_name="$1"
+  local target_name="$2"
+  local target_file="$PROJECT_SECRETS_DIR/$target_name"
+
+  mkdir -p "$PROJECT_SECRETS_DIR"
+  local old_umask
+  old_umask="$(umask)"
+  umask 077
+  printf '%s\n' "${!var_name}" > "$target_file"
+  umask "$old_umask"
+  chmod 600 "$target_file"
+  echo "OK: segredo preparado para Docker: $target_name"
+}
+
+write_secret_files() {
+  mkdir -p "$PROJECT_SECRETS_DIR"
+  chmod 700 "$PROJECT_SECRETS_DIR"
+  write_one_secret_file "CKAN_DB_PASSWORD" "ckan_db_password"
+  write_one_secret_file "CKAN_SYSADMIN_PASSWORD" "ckan_sysadmin_password"
+}
+
 backup_file() {
   local f="$1"
   if [[ -e "$f" ]]; then
@@ -93,24 +140,6 @@ backup_project_file() {
     cp -a "$f" "$BACKUP_DIR/${label}.${STAMP}.bak"
     echo "Backup em: $BACKUP_DIR/${label}.${STAMP}.bak"
   fi
-}
-
-validate_sfb_rootfs_structure() {
-  echo "Validando estrutura esperada do rootfs da customização SFB..."
-
-  [[ -d "$REPO_SFB_DIR/rootfs" ]] || fail "repositório SFB não contém rootfs: $REPO_SFB_DIR/rootfs"
-
-  [[ -d "$REPO_SFB_DIR/rootfs/etc/ckan/custom" ]] || fail "ausente: rootfs/etc/ckan/custom"
-  [[ -d "$REPO_SFB_DIR/rootfs/etc/ckan/custom/templates" ]] || fail "ausente: rootfs/etc/ckan/custom/templates"
-  [[ -d "$REPO_SFB_DIR/rootfs/etc/ckan/custom/public" ]] || fail "ausente: rootfs/etc/ckan/custom/public"
-  [[ -d "$REPO_SFB_DIR/rootfs/etc/ckan/schemas" ]] || fail "ausente: rootfs/etc/ckan/schemas"
-  [[ -f "$REPO_SFB_DIR/rootfs/etc/ckan/schemas/sfb_dataset.yaml" ]] || fail "ausente: rootfs/etc/ckan/schemas/sfb_dataset.yaml"
-
-  for ext in $SFB_EXTS; do
-    [[ -d "$REPO_SFB_DIR/rootfs/usr/lib/ckan/venv/src/$ext" ]] || fail "extensão ausente no rootfs: rootfs/usr/lib/ckan/venv/src/$ext"
-  done
-
-  echo "OK: estrutura rootfs compatível com o instalador Docker."
 }
 
 install_docker() {
@@ -147,23 +176,6 @@ EOF
   docker compose version
 }
 
-write_dockerignore() {
-  cat > "$DOCKERIGNORE_FILE" <<'EOF'
-# Arquivos que não devem entrar na imagem CKAN SFB
-# Mantém a mesma intenção do rsync do instalador original.
-repo/sfb/rootfs/etc/ckan/ckan.ini
-repo/sfb/rootfs/etc/letsencrypt/
-repo/sfb/rootfs/**/*.bak
-repo/sfb/rootfs/**/*.bkp
-repo/sfb/rootfs/**/*.BKP
-repo/sfb/rootfs/**/*.pyc
-repo/sfb/rootfs/**/__pycache__/
-repo/sfb/rootfs/**/*.egg-info/
-EOF
-
-  chmod 644 "$DOCKERIGNORE_FILE"
-}
-
 write_env_file() {
   cat > "$ENV_FILE" <<EOF
 CKAN_VERSION=${CKAN_VERSION}
@@ -185,13 +197,13 @@ CKAN_RESOURCE_PROXY_MAX_FILE_SIZE_BYTES=${CKAN_RESOURCE_PROXY_MAX_FILE_SIZE_BYTE
 
 CKAN_SYSADMIN_NAME=${CKAN_SYSADMIN_NAME}
 CKAN_SYSADMIN_EMAIL=${CKAN_SYSADMIN_EMAIL}
-CKAN_SYSADMIN_PASSWORD=${CKAN_SYSADMIN_PASSWORD}
+CKAN_SYSADMIN_PASSWORD_FILE=/run/secrets/ckan_sysadmin_password
 
 CKAN_DB_HOST=${CKAN_DB_HOST}
 CKAN_DB_PORT=${CKAN_DB_PORT}
 CKAN_DB_NAME=${CKAN_DB_NAME}
 CKAN_DB_USER=${CKAN_DB_USER}
-CKAN_DB_PASSWORD=${CKAN_DB_PASSWORD}
+CKAN_DB_PASSWORD_FILE=/run/secrets/ckan_db_password
 
 REDIS_HOST=${REDIS_HOST}
 REDIS_PORT=${REDIS_PORT}
@@ -358,6 +370,23 @@ wait_tcp() {
   exit 1
 }
 
+load_secret_var() {
+  local var_name="$1"
+  local file_var="${var_name}_FILE"
+  local secret_file="${!file_var:-}"
+
+  if [[ -n "$secret_file" && -f "$secret_file" ]]; then
+    export "$var_name=$(cat "$secret_file")"
+  fi
+
+  if [[ -z "${!var_name:-}" ]]; then
+    echo "ERRO: segredo obrigatório não carregado no container: $var_name"
+    exit 1
+  fi
+
+  echo "OK: segredo carregado no container: $var_name"
+}
+
 write_ini_settings() {
   python <<'PY'
 from pathlib import Path
@@ -488,6 +517,10 @@ for key in ["ckan.site_custom_css"]:
 model.Session.commit()
 PY
 }
+
+log "CARREGANDO SEGREDOS DOCKER"
+load_secret_var CKAN_DB_PASSWORD
+load_secret_var CKAN_SYSADMIN_PASSWORD
 
 log "AGUARDANDO DEPENDÊNCIAS"
 wait_tcp "$CKAN_DB_HOST" "$CKAN_DB_PORT" "PostgreSQL" 120
@@ -672,7 +705,9 @@ services:
     environment:
       POSTGRES_DB: ${CKAN_DB_NAME}
       POSTGRES_USER: ${CKAN_DB_USER}
-      POSTGRES_PASSWORD: ${CKAN_DB_PASSWORD}
+      POSTGRES_PASSWORD_FILE: /run/secrets/ckan_db_password
+    secrets:
+      - ckan_db_password
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -732,6 +767,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    secrets:
+      - ckan_db_password
+      - ckan_sysadmin_password
     depends_on:
       db:
         condition: service_healthy
@@ -739,8 +777,8 @@ services:
         condition: service_healthy
       solr:
         condition: service_healthy
-    # Não montar /etc/ckan como volume: isso preserva templates, schemas e CSS copiados do rootfs para a imagem.
     volumes:
+      - ./ckan-config:/etc/ckan
       - ckan_storage:/var/lib/ckan
     networks:
       - ckan_sfb_net
@@ -768,6 +806,12 @@ ${nginx_ports_block}
       - ./letsencrypt:/etc/letsencrypt
     networks:
       - ckan_sfb_net
+
+secrets:
+  ckan_db_password:
+    file: ./secrets/ckan_db_password
+  ckan_sysadmin_password:
+    file: ./secrets/ckan_sysadmin_password
 
 networks:
   ckan_sfb_net:
@@ -824,6 +868,7 @@ echo "Data: $(date)"
 echo "Host: $(hostname)"
 echo "Script: $SCRIPT_PATH"
 echo "Vars: $VARS_FILE"
+echo "Secrets: $SECRETS_FILE"
 echo "Log: $LOG_FILE"
 echo "Backup: $BACKUP_DIR"
 echo "Projeto Docker: $PROJECT_DIR"
@@ -832,22 +877,26 @@ echo "URL final: $SITE_URL"
 step 2 "VALIDANDO VARIÁVEIS OBRIGATÓRIAS"
 for v in \
   INSTALL_DIR DOMAIN CKAN_VERSION CKAN_GIT_URL PYTHON_VERSION \
-  CKAN_SYSADMIN_NAME CKAN_SYSADMIN_EMAIL CKAN_SYSADMIN_PASSWORD \
-  CKAN_DB_NAME CKAN_DB_USER CKAN_DB_PASSWORD \
+  CKAN_SYSADMIN_NAME CKAN_SYSADMIN_EMAIL \
+  CKAN_DB_NAME CKAN_DB_USER \
   POSTGRES_IMAGE REDIS_IMAGE SOLR_IMAGE NGINX_IMAGE CERTBOT_IMAGE \
   SOLR_CORE CKAN_SOLR_SCHEMA_URL GIT_REPO_URL GIT_BRANCH \
   SCHEMING_GIT_URL SCHEMING_GIT_BRANCH SFB_EXTS CKAN_PLUGINS; do
   require_var "$v"
 done
 
+for v in CKAN_DB_PASSWORD CKAN_SYSADMIN_PASSWORD; do
+  require_secret_var "$v"
+done
+
 [[ "$CKAN_VERSION" == "ckan-2.10.7" ]] || fail "Por exigência do cliente, CKAN_VERSION deve ser ckan-2.10.7. Atual: $CKAN_VERSION"
 
 if [[ "$CKAN_DB_PASSWORD" == "TROQUE_ESTA_SENHA_DO_BANCO" ]]; then
-  fail "Troque CKAN_DB_PASSWORD no arquivo .vars antes de rodar."
+  fail "Troque CKAN_DB_PASSWORD no arquivo .secrets antes de rodar."
 fi
 
 if [[ "$CKAN_SYSADMIN_PASSWORD" == "TROQUE_ESTA_SENHA_DO_SYSADMIN" ]]; then
-  fail "Troque CKAN_SYSADMIN_PASSWORD no arquivo .vars antes de rodar."
+  fail "Troque CKAN_SYSADMIN_PASSWORD no arquivo .secrets antes de rodar."
 fi
 
 echo "OK: variáveis obrigatórias validadas."
@@ -904,6 +953,8 @@ mkdir -p \
   "$NGINX_DIR" \
   "$CERTBOT_WWW_DIR" \
   "$LETSENCRYPT_DIR" \
+  "$CKAN_CONFIG_DIR" \
+  "$PROJECT_SECRETS_DIR"
 
 backup_project_file "$COMPOSE_FILE"
 backup_project_file "$ENV_FILE"
@@ -911,7 +962,6 @@ backup_project_file "$NGINX_DIR/default.conf"
 backup_project_file "$CKAN_BUILD_DIR/Dockerfile"
 backup_project_file "$CKAN_BUILD_DIR/entrypoint.sh"
 backup_project_file "$SOLR_BUILD_DIR/Dockerfile"
-backup_project_file "$DOCKERIGNORE_FILE"
 
 step 7 "CLONANDO OU ATUALIZANDO CUSTOMIZAÇÃO SFB"
 if [[ -d "$REPO_SFB_DIR/.git" ]]; then
@@ -926,51 +976,84 @@ else
 fi
 
 git log --oneline -1
-if [[ "${VALIDATE_ROOTFS_STRUCTURE,,}" == "true" ]]; then
-  validate_sfb_rootfs_structure
+[[ -d "$REPO_SFB_DIR/rootfs" ]] || fail "repositório SFB não contém rootfs: $REPO_SFB_DIR/rootfs"
+
+step 8 "SEMEANDO /ETC/CKAN DO ROOTFS NO VOLUME DOCKER"
+
+if [[ -d "$REPO_SFB_DIR/rootfs/etc/ckan" ]]; then
+  echo "Copiando rootfs/etc/ckan para o volume persistente: $CKAN_CONFIG_DIR"
+
+  if [[ -d "$CKAN_CONFIG_DIR" ]] && find "$CKAN_CONFIG_DIR" -mindepth 1 -print -quit | grep -q .; then
+    tar -czf "$BACKUP_DIR/ckan-config-before-seed-${STAMP}.tar.gz" -C "$CKAN_CONFIG_DIR" .
+    echo "Backup do ckan-config atual: $BACKUP_DIR/ckan-config-before-seed-${STAMP}.tar.gz"
+  fi
+
+  rsync -aHv \
+    --exclude='ckan.ini' \
+    --exclude='*.bak' \
+    --exclude='*.bkp' \
+    --exclude='*.BKP' \
+    --exclude='*.pyc' \
+    --exclude='__pycache__/' \
+    "$REPO_SFB_DIR/rootfs/etc/ckan/" \
+    "$CKAN_CONFIG_DIR/"
+
+  echo "OK: arquivos de /etc/ckan semeados no volume Docker."
 else
-  [[ -d "$REPO_SFB_DIR/rootfs" ]] || fail "repositório SFB não contém rootfs: $REPO_SFB_DIR/rootfs"
-  echo "VALIDATE_ROOTFS_STRUCTURE=false. Validação detalhada do rootfs pulada."
+  fail "rootfs/etc/ckan não encontrado em: $REPO_SFB_DIR/rootfs/etc/ckan"
 fi
 
-step 8 "BAIXANDO SCHEMA SOLR DO CKAN 2.10.7"
+if [[ ! -f "$CKAN_CONFIG_DIR/schemas/sfb_dataset.yaml" ]]; then
+  fail "schema SFB não encontrado após semeadura: $CKAN_CONFIG_DIR/schemas/sfb_dataset.yaml"
+fi
+
+if [[ ! -d "$CKAN_CONFIG_DIR/custom/templates" ]]; then
+  fail "templates custom não encontrados após semeadura: $CKAN_CONFIG_DIR/custom/templates"
+fi
+
+if [[ ! -d "$CKAN_CONFIG_DIR/custom/public" ]]; then
+  fail "public custom não encontrado após semeadura: $CKAN_CONFIG_DIR/custom/public"
+fi
+
+step 9 "BAIXANDO SCHEMA SOLR DO CKAN 2.10.7"
 wget -O "$SOLR_BUILD_DIR/managed-schema" "$CKAN_SOLR_SCHEMA_URL"
 ls -lh "$SOLR_BUILD_DIR/managed-schema"
 
-step 9 "GERANDO .ENV DO DOCKER"
+step 10 "GERANDO SEGREDOS LOCAIS E .ENV DO DOCKER"
+write_secret_files
 write_env_file
-write_dockerignore
-ls -lh "$ENV_FILE" "$DOCKERIGNORE_FILE"
+ls -lh "$ENV_FILE"
+echo "OK: arquivos secretos Docker criados em: $PROJECT_SECRETS_DIR"
 
-step 10 "GERANDO DOCKERFILE DO CKAN"
+step 11 "GERANDO DOCKERFILE DO CKAN"
 write_ckan_dockerfile
 write_ckan_entrypoint
 ls -lh "$CKAN_BUILD_DIR/Dockerfile" "$CKAN_BUILD_DIR/entrypoint.sh"
 
-step 11 "GERANDO DOCKERFILE DO SOLR"
+step 12 "GERANDO DOCKERFILE DO SOLR"
 write_solr_dockerfile
 ls -lh "$SOLR_BUILD_DIR/Dockerfile"
 
-step 12 "GERANDO NGINX HTTP INICIAL"
+step 13 "GERANDO NGINX HTTP INICIAL"
 write_nginx_http_conf
 nginx_preview="$(sed -n '1,120p' "$NGINX_DIR/default.conf")"
 echo "$nginx_preview"
 
-step 13 "GERANDO DOCKER-COMPOSE.YML"
+step 14 "GERANDO DOCKER-COMPOSE.YML"
 write_compose_file
 sed -n '1,240p' "$COMPOSE_FILE"
 
-step 14 "CONFIGURANDO FIREWALL LOCAL"
+step 15 "CONFIGURANDO FIREWALL LOCAL"
 configure_firewall
 
-step 15 "BUILD DAS IMAGENS"
+step 16 "BUILD DAS IMAGENS"
 cd "$PROJECT_DIR"
 docker compose build --no-cache
 
-step 16 "SUBINDO CONTAINERS"
+step 17 "SUBINDO CONTAINERS"
 docker compose up -d
 
-step 17 "AGUARDANDO CKAN PELO NGINX HTTP"
+step 18 "AGUARDANDO CKAN PELO NGINX HTTP"
 for i in $(seq 1 120); do
   if curl -fsS -H "Host: ${DOMAIN}" "http://127.0.0.1/api/3/action/status_show" >/dev/null 2>&1; then
     echo "OK: CKAN respondeu via Nginx HTTP."
@@ -986,7 +1069,7 @@ for i in $(seq 1 120); do
   sleep 2
 done
 
-step 18 "ATIVANDO HTTPS COM CERTBOT, SE CONFIGURADO"
+step 19 "ATIVANDO HTTPS COM CERTBOT, SE CONFIGURADO"
 if [[ "${ENABLE_HTTPS,,}" == "true" ]]; then
   if [[ -n "${CERTBOT_EMAIL:-}" ]]; then
     CERTBOT_ACCOUNT_ARGS=(--email "$CERTBOT_EMAIL")
@@ -1012,10 +1095,10 @@ else
   echo "ENABLE_HTTPS=false. Mantendo somente HTTP."
 fi
 
-step 19 "VALIDANDO CKAN CONFIG"
+step 20 "VALIDANDO CKAN CONFIG"
 docker compose exec -T ckan ckan -c "$CKAN_INI" config validate
 
-step 20 "VALIDANDO IMPORTS DAS EXTENSÕES"
+step 21 "VALIDANDO IMPORTS DAS EXTENSÕES"
 docker compose exec -T ckan python <<PY
 mods = ["ckanext.scheming.plugins"] + """${SFB_IMPORT_MODULES}""".split()
 for mod in mods:
@@ -1023,7 +1106,7 @@ for mod in mods:
     print("OK import:", mod)
 PY
 
-step 21 "VALIDANDO SCHEMA SCHEMING"
+step 22 "VALIDANDO SCHEMA SCHEMING"
 docker compose exec -T ckan ckan -c "$CKAN_INI" shell <<'PY'
 import ckanext.scheming.helpers as sh
 schema = sh.scheming_get_dataset_schema("dataset")
@@ -1032,10 +1115,10 @@ print("dataset_type =", schema.get("dataset_type"))
 print("dataset_fields =", len(schema.get("dataset_fields", [])))
 PY
 
-step 22 "VALIDANDO API LOCAL"
+step 23 "VALIDANDO API LOCAL"
 curl -fsS -H "Host: ${DOMAIN}" "http://127.0.0.1/api/3/action/status_show" | python3 -m json.tool | sed -n '1,120p'
 
-step 23 "VALIDANDO DOMÍNIO"
+step 24 "VALIDANDO DOMÍNIO"
 if [[ "${ENABLE_HTTPS,,}" == "true" ]]; then
   curl -I -k -s --connect-timeout 15 --resolve "${DOMAIN}:443:127.0.0.1" "https://${DOMAIN}/" | sed -n '1,20p'
   curl -I -k -s --connect-timeout 15 --resolve "${DOMAIN}:443:127.0.0.1" "https://${DOMAIN}/dataset/" | sed -n '1,20p'
@@ -1044,11 +1127,11 @@ else
   curl -I -s --connect-timeout 15 -H "Host: ${DOMAIN}" "http://127.0.0.1/dataset/" | sed -n '1,20p'
 fi
 
-step 24 "STATUS DOS CONTAINERS E PORTAS"
+step 25 "STATUS DOS CONTAINERS E PORTAS"
 docker compose ps
 ss -lntp | grep -E ':(80|443|5000|5432|6379|8983)\b' || true
 
-step 25 "FINALIZAÇÃO"
+step 26 "FINALIZAÇÃO"
 echo
 echo "============================================================"
 echo "INSTALAÇÃO DOCKER CKAN SFB CONCLUÍDA"

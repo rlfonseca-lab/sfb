@@ -1,10 +1,10 @@
-# Instalação do CKAN SFB
+# Instalação do CKAN SFB em Docker
 
-Este repositório contém um script único para instalar o CKAN e aplicar a customização do projeto SFB.
+Este repositório contém um instalador único para subir o CKAN SFB em containers Docker e aplicar a customização do projeto SFB.
 
-O processo instala:
+O processo instala e configura:
 
-- CKAN
+- CKAN 2.10.7
 - PostgreSQL
 - Solr
 - Redis
@@ -17,16 +17,22 @@ O processo instala:
 O script principal é:
 
 ```text
-install_ckan_sfb_full.sh
+install_ckan_sfb_docker_full.sh
 ```
 
-O arquivo de parâmetros é:
+O arquivo de variáveis não sensíveis é:
 
 ```text
-install_ckan_sfb_full.vars
+install_ckan_sfb_docker_full.vars
 ```
 
-Os dois arquivos devem ficar na mesma pasta. O script procura automaticamente o arquivo `.vars` com o mesmo nome-base do `.sh`.
+O arquivo de segredos editável é:
+
+```text
+install_ckan_sfb_docker_full.secrets
+```
+
+Os três arquivos devem ficar na mesma pasta. O script **não recebe parâmetros** e procura automaticamente os arquivos `.vars` e `.secrets` no mesmo diretório onde o `.sh` está.
 
 ---
 
@@ -39,11 +45,11 @@ Ele é recomendado para:
 - VM nova
 - ambiente de homologação
 - ambiente de produção recém-criado
-- reinstalação completa do CKAN SFB
+- reinstalação completa do CKAN SFB em Docker
 
 Evite rodar este script diretamente em um servidor CKAN já em uso, com dados reais, sem antes fazer backup completo.
 
-O script instala e altera serviços importantes do servidor, incluindo PostgreSQL, Solr, Redis, Nginx, Certbot e firewall.
+O script instala e altera serviços importantes do servidor, incluindo Docker, containers de PostgreSQL, Solr, Redis, CKAN, Nginx, Certbot e regras de firewall.
 
 ---
 
@@ -62,8 +68,8 @@ Recomendado:
 Para produção, recomenda-se pelo menos:
 
 - 2 vCPU
-- 8 GB de RAM
-- 100 GB de disco ou mais
+- 4 GB a 8 GB de RAM
+- 40 GB de disco ou mais
 
 ### Domínio
 
@@ -72,7 +78,7 @@ Para instalação com HTTPS, o domínio precisa apontar para o IP público do se
 Exemplo:
 
 ```text
-custom.ckan.exemplo.com.br -> IP_PUBLICO_DA_VM
+custom.ckan.exemplo.gov.br -> IP_PUBLICO_DA_VM
 ```
 
 Se o domínio ainda não estiver apontando corretamente, o Certbot não conseguirá emitir o certificado HTTPS.
@@ -107,36 +113,84 @@ echo '===============FIM=================='
 
 ## 4. Conferir os arquivos do instalador
 
-Dentro da pasta do repositório, confira se os dois arquivos existem:
+Dentro da pasta do repositório, confira se os três arquivos existem:
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-ls -lh install_ckan_sfb_full.sh install_ckan_sfb_full.vars
+ls -lh \
+  install_ckan_sfb_docker_full.sh \
+  install_ckan_sfb_docker_full.vars \
+  install_ckan_sfb_docker_full.secrets
 echo '===============FIM=================='
 ```
 
 Resultado esperado:
 
 ```text
-install_ckan_sfb_full.sh
-install_ckan_sfb_full.vars
+install_ckan_sfb_docker_full.sh
+install_ckan_sfb_docker_full.vars
+install_ckan_sfb_docker_full.secrets
+```
+
+Também é importante confirmar que o repositório contém a pasta `rootfs`, pois é dela que vêm as customizações do SFB.
+
+```bash
+clear
+echo '===============INÍCIO==============='
+ls -ld rootfs
+find rootfs -maxdepth 3 -type d | sort | sed -n '1,80p'
+echo '===============FIM=================='
 ```
 
 ---
 
-## 5. Editar o arquivo `.vars`
+## 5. Entender os três arquivos principais
+
+### `install_ckan_sfb_docker_full.sh`
+
+É o instalador. Ele:
+
+- instala Docker e Docker Compose, se necessário;
+- baixa ou atualiza o repositório de customização SFB;
+- gera os arquivos Docker necessários;
+- cria os containers;
+- configura Nginx e HTTPS;
+- valida CKAN, plugins, schema e API.
+
+O script deve ser executado sem parâmetros:
+
+```bash
+clear
+echo '===============INÍCIO==============='
+sudo ./install_ckan_sfb_docker_full.sh
+echo '===============FIM=================='
+```
+
+### `install_ckan_sfb_docker_full.vars`
+
+Guarda configurações não sensíveis, como domínio, imagens Docker, caminhos, nome do banco, usuário do banco, plugins e opções de comportamento.
+
+Ele **não deve conter senhas, tokens ou chaves reais**.
+
+### `install_ckan_sfb_docker_full.secrets`
+
+Guarda os segredos da instalação.
+
+Esse arquivo vai junto no Git como modelo editável para o cliente, mas no repositório ele deve conter apenas placeholders. Antes de rodar o instalador na VM, troque os valores de exemplo por senhas reais.
+
+---
+
+## 6. Editar o arquivo `.vars`
 
 Antes de rodar a instalação, edite o arquivo de variáveis:
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-nano install_ckan_sfb_full.vars
+nano install_ckan_sfb_docker_full.vars
 echo '===============FIM=================='
 ```
-
-Esse arquivo concentra os dados que podem mudar de uma instalação para outra.
 
 Atenção especial para estes campos:
 
@@ -147,16 +201,10 @@ CERTBOT_EMAIL="email@exemplo.gov.br"
 EXPECTED_DNS_IP="IP_PUBLICO_DA_VM"
 ```
 
-Também revise os usuários e senhas:
+Confira também o diretório onde o projeto Docker será criado:
 
 ```bash
-CKAN_DB_NAME="ckan_default"
-CKAN_DB_USER="ckan_default"
-CKAN_DB_PASSWORD="troque_esta_senha"
-
-CKAN_SYSADMIN_NAME="ckanadmin"
-CKAN_SYSADMIN_EMAIL="admin@exemplo.gov.br"
-CKAN_SYSADMIN_PASSWORD="troque_esta_senha"
+INSTALL_DIR="/opt/ckan-sfb-docker"
 ```
 
 E confira o repositório Git usado para aplicar a customização:
@@ -168,7 +216,53 @@ GIT_BRANCH="main"
 
 ---
 
-## 6. Principais variáveis do `.vars`
+## 7. Editar o arquivo `.secrets`
+
+Agora edite o arquivo de segredos:
+
+```bash
+clear
+echo '===============INÍCIO==============='
+nano install_ckan_sfb_docker_full.secrets
+echo '===============FIM=================='
+```
+
+Troque obrigatoriamente os placeholders:
+
+```bash
+CKAN_DB_PASSWORD="TROQUE_ESTA_SENHA_DO_BANCO"
+CKAN_SYSADMIN_PASSWORD="TROQUE_ESTA_SENHA_DO_SYSADMIN"
+```
+
+Por exemplo:
+
+```bash
+CKAN_DB_PASSWORD="uma_senha_forte_para_o_banco"
+CKAN_SYSADMIN_PASSWORD="uma_senha_forte_para_o_admin"
+```
+
+Atenção: não deixe senhas reais salvas no Git. O arquivo `.secrets` entregue no repositório deve funcionar como modelo. A versão editada com senhas reais deve ficar apenas na VM de instalação.
+
+---
+
+## 8. Principais variáveis do `.vars`
+
+### Execução e firewall
+
+| Variável | Para que serve |
+|---|---|
+| `RUN_APT_UPGRADE` | Define se o script fará `apt upgrade` antes da instalação |
+| `ENABLE_UFW` | Ativa ou desativa configuração de firewall |
+| `SSH_PORT` | Porta SSH que será liberada no firewall |
+| `FORCE_OVERWRITE_PROJECT_DIR` | Permite sobrescrever arquivos do kit em `INSTALL_DIR` |
+
+### Diretórios
+
+| Variável | Para que serve |
+|---|---|
+| `INSTALL_DIR` | Diretório do projeto Docker gerado pelo instalador |
+| `LOG_DIR` | Diretório dos logs da instalação |
+| `BACKUP_ROOT` | Diretório base dos backups |
 
 ### Domínio e HTTPS
 
@@ -177,40 +271,24 @@ GIT_BRANCH="main"
 | `DOMAIN` | Domínio público do CKAN |
 | `ENABLE_HTTPS` | Ativa ou desativa HTTPS com Certbot |
 | `CERTBOT_EMAIL` | E-mail usado no Let's Encrypt |
-| `EXPECTED_DNS_IP` | IP esperado no DNS, usado para conferência |
-
-### Banco de dados
-
-| Variável | Para que serve |
-|---|---|
-| `CKAN_DB_NAME` | Nome do banco PostgreSQL do CKAN |
-| `CKAN_DB_USER` | Usuário PostgreSQL do CKAN |
-| `CKAN_DB_PASSWORD` | Senha do usuário PostgreSQL |
-
-### Usuário administrador do CKAN
-
-| Variável | Para que serve |
-|---|---|
-| `CKAN_SYSADMIN_NAME` | Nome do usuário administrador |
-| `CKAN_SYSADMIN_EMAIL` | E-mail do administrador |
-| `CKAN_SYSADMIN_PASSWORD` | Senha inicial do administrador |
+| `EXPECTED_DNS_IP` | IP esperado no DNS, usado para conferência informativa |
 
 ### CKAN
 
 | Variável | Para que serve |
 |---|---|
-| `CKAN_USER` | Usuário Linux que executará o CKAN |
-| `CKAN_GROUP` | Grupo Linux do CKAN |
-| `CKAN_INSTALL_DIR` | Diretório principal da instalação |
-| `CKAN_INI` | Caminho do arquivo `ckan.ini` |
-| `CKAN_STORAGE_PATH` | Diretório de armazenamento de arquivos |
-| `CKAN_HOST` | Endereço local onde o CKAN escuta |
-| `CKAN_PORT` | Porta local do CKAN |
+| `CKAN_VERSION` | Versão do CKAN exigida pelo projeto |
+| `CKAN_SITE_ID` | Identificador interno do site CKAN |
+| `CKAN_SITE_TITLE` | Título do portal |
+| `CKAN_INTERNAL_PORT` | Porta interna do container CKAN |
+| `PUBLISH_CKAN_LOCAL_PORT` | Publica a porta do CKAN apenas no localhost do host |
+| `CKAN_LOCAL_BIND` | Bind local para debug, normalmente `127.0.0.1:5000` |
 
-Por segurança, mantenha:
+Por segurança, mantenha a porta local presa em `127.0.0.1`:
 
 ```bash
-CKAN_HOST="127.0.0.1"
+PUBLISH_CKAN_LOCAL_PORT="true"
+CKAN_LOCAL_BIND="127.0.0.1:5000"
 ```
 
 Assim, o CKAN não fica exposto diretamente na internet. O acesso público será feito pelo Nginx.
@@ -232,6 +310,58 @@ CKAN_RESOURCE_PROXY_MAX_FILE_SIZE_BYTES="314572800"
 NGINX_CLIENT_MAX_BODY_SIZE="300M"
 ```
 
+### Banco de dados
+
+| Variável | Para que serve |
+|---|---|
+| `POSTGRES_IMAGE` | Imagem Docker do PostgreSQL |
+| `CKAN_DB_HOST` | Host interno do banco na rede Docker |
+| `CKAN_DB_PORT` | Porta interna do banco |
+| `CKAN_DB_NAME` | Nome do banco PostgreSQL do CKAN |
+| `CKAN_DB_USER` | Usuário PostgreSQL do CKAN |
+
+A senha do banco não fica no `.vars`. Ela fica no `.secrets`.
+
+### Usuário administrador do CKAN
+
+| Variável | Para que serve |
+|---|---|
+| `CKAN_SYSADMIN_NAME` | Nome do usuário administrador |
+| `CKAN_SYSADMIN_EMAIL` | E-mail do administrador |
+
+A senha do administrador não fica no `.vars`. Ela fica no `.secrets`.
+
+### Imagens Docker
+
+| Variável | Para que serve |
+|---|---|
+| `POSTGRES_IMAGE` | Imagem do PostgreSQL |
+| `REDIS_IMAGE` | Imagem do Redis |
+| `SOLR_IMAGE` | Imagem do Solr |
+| `NGINX_IMAGE` | Imagem do Nginx |
+| `CERTBOT_IMAGE` | Imagem do Certbot |
+
+### Customização SFB
+
+| Variável | Para que serve |
+|---|---|
+| `GIT_REPO_URL` | Repositório Git da customização SFB |
+| `GIT_BRANCH` | Branch usada na instalação |
+| `SFB_EXTS` | Lista das extensões SFB esperadas no `rootfs` |
+| `SFB_IMPORT_MODULES` | Módulos Python usados na validação final |
+| `CKAN_PLUGINS` | Plugins habilitados no CKAN |
+
+### Scheming e idioma
+
+| Variável | Para que serve |
+|---|---|
+| `SCHEMING_PRESETS` | Presets usados pelo `ckanext-scheming` |
+| `SCHEMING_DATASET_SCHEMAS` | Caminho do schema YAML do dataset |
+| `SCHEMING_DATASET_FALLBACK` | Ativa ou desativa fallback do schema |
+| `CKAN_LOCALE_DEFAULT` | Idioma padrão |
+| `CKAN_LOCALES_OFFERED` | Idiomas oferecidos |
+| `CKAN_I18N_EXTRA_DIRECTORY` | Diretório de traduções extras |
+
 ### Reindexação
 
 | Variável | Para que serve |
@@ -250,35 +380,72 @@ Para reinstalação ou mudança de campos/facets, pode ser útil usar:
 REINDEX_SEARCH="true"
 ```
 
-### Opções perigosas
+---
 
-Estas opções devem ser usadas com cuidado:
+## 9. Principais variáveis do `.secrets`
+
+| Variável | Para que serve |
+|---|---|
+| `CKAN_DB_PASSWORD` | Senha do usuário PostgreSQL do CKAN |
+| `CKAN_SYSADMIN_PASSWORD` | Senha inicial do usuário administrador do CKAN |
+| `GIT_TOKEN` | Reservado para uso futuro, não usado na versão atual |
+| `API_TOKEN` | Reservado para uso futuro, não usado na versão atual |
+| `SECRET_KEY` | Reservado para uso futuro, não usado na versão atual |
+
+Na versão atual, os segredos obrigatórios são:
 
 ```bash
-FORCE_RECREATE_CKAN_DB="false"
-FORCE_RECREATE_SOLR_CORE="false"
-FORCE_OVERWRITE_CKAN_INI="true"
+CKAN_DB_PASSWORD="..."
+CKAN_SYSADMIN_PASSWORD="..."
 ```
 
-Significado:
+O instalador para com erro se essas variáveis estiverem vazias ou ainda estiverem com os placeholders originais.
 
-| Variável | Efeito |
-|---|---|
-| `FORCE_RECREATE_CKAN_DB` | Apaga e recria o banco do CKAN |
-| `FORCE_RECREATE_SOLR_CORE` | Apaga e recria o core Solr |
-| `FORCE_OVERWRITE_CKAN_INI` | Recria o arquivo principal de configuração do CKAN |
+---
 
-Em servidor novo, os valores padrão podem ser usados.
+## 10. Como o `rootfs` é usado
 
-Em servidor com dados importantes, não use:
+O repositório de customização deve conter uma pasta chamada:
 
-```bash
-FORCE_RECREATE_CKAN_DB="true"
+```text
+rootfs
+```
+
+O instalador usa essa pasta de duas formas:
+
+1. copia o conteúdo de `rootfs/` para dentro da imagem Docker do CKAN;
+2. copia `rootfs/etc/ckan/` para o volume persistente Docker `ckan-config`.
+
+Esse segundo ponto é importante porque o container monta o volume:
+
+```text
+/opt/ckan-sfb-docker/ckan-config -> /etc/ckan
+```
+
+Então os arquivos de schema, templates e assets customizados precisam estar também no volume persistente.
+
+O instalador valida a presença de pelo menos:
+
+```text
+rootfs/etc/ckan/schemas/sfb_dataset.yaml
+rootfs/etc/ckan/custom/templates
+rootfs/etc/ckan/custom/public
+```
+
+Também espera encontrar as extensões SFB dentro de caminhos compatíveis com:
+
+```text
+rootfs/usr/lib/ckan/venv/src/ckanext-sfb_access
+rootfs/usr/lib/ckan/venv/src/ckanext-sfb_facets_multi
+rootfs/usr/lib/ckan/venv/src/ckanext-sfb_geo_facet
+rootfs/usr/lib/ckan/venv/src/ckanext-sfb_group_sync
+rootfs/usr/lib/ckan/venv/src/ckanext-sfbdraftsearch
+rootfs/usr/lib/ckan/venv/src/ckanext-sfbgroups
 ```
 
 ---
 
-## 7. Conferir DNS antes de instalar
+## 11. Conferir DNS antes de instalar
 
 Antes de ativar HTTPS, confira se o domínio aponta para o IP da VM.
 
@@ -304,28 +471,29 @@ Se não mostrar, ajuste o DNS antes de continuar.
 
 ---
 
-## 8. Dar permissão de execução ao script
+## 12. Dar permissão de execução ao script
 
-Depois de editar o `.vars`, ajuste as permissões:
+Depois de editar o `.vars` e o `.secrets`, ajuste as permissões:
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-chmod 700 install_ckan_sfb_full.sh
-chmod 600 install_ckan_sfb_full.vars
+chmod 700 install_ckan_sfb_docker_full.sh
+chmod 644 install_ckan_sfb_docker_full.vars
+chmod 600 install_ckan_sfb_docker_full.secrets
 echo '===============FIM=================='
 ```
 
 ---
 
-## 9. Rodar a instalação
+## 13. Rodar a instalação
 
 Execute o script como `root` ou com `sudo`:
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-sudo ./install_ckan_sfb_full.sh
+sudo ./install_ckan_sfb_docker_full.sh
 echo '===============FIM=================='
 ```
 
@@ -334,79 +502,77 @@ O script exibirá várias etapas no terminal.
 Cada etapa aparece neste formato:
 
 ```text
-----------[1/31]---------- INÍCIO, LOG E VARIÁVEIS ----------
+----------[1/26]---------- INÍCIO, LOG E VARIÁVEIS ----------
 ```
 
 Isso ajuda a saber em qual ponto da instalação o processo está.
 
----
-
-## 10. Rodar usando outro arquivo `.vars`
-
-Normalmente, o script usa automaticamente:
-
-```text
-install_ckan_sfb_full.vars
-```
-
-Mas também é possível informar outro arquivo de variáveis:
-
-```bash
-clear
-echo '===============INÍCIO==============='
-sudo ./install_ckan_sfb_full.sh /caminho/para/outro-arquivo.vars
-echo '===============FIM=================='
-```
+Atenção: este script não aceita parâmetros. Se você tentar passar um `.vars` manualmente, ele encerrará com erro.
 
 ---
 
-## 11. O que o script faz
+## 14. O que o script faz
 
 De forma resumida, o instalador executa estas ações:
 
-1. Carrega o arquivo `.vars`
+1. Localiza automaticamente o `.vars` e o `.secrets` no diretório do script
 2. Cria arquivo de log
 3. Cria pasta de backup
 4. Valida variáveis obrigatórias
-5. Atualiza pacotes do sistema
-6. Instala Python e dependências
-7. Instala e protege Redis
-8. Instala e protege PostgreSQL
-9. Cria usuário e banco do CKAN
-10. Instala Java e Solr
-11. Cria o core Solr do CKAN
-12. Instala o CKAN em ambiente virtual Python
-13. Gera e configura o `ckan.ini`
-14. Inicializa o banco do CKAN
-15. Cria o usuário administrador
-16. Baixa a customização SFB do Git
-17. Aplica os arquivos da pasta `rootfs`
-18. Instala `ckanext-scheming`
-19. Instala extensões customizadas do SFB
-20. Configura idioma, plugins, tema e schema
-21. Compila traduções
-22. Configura o CKAN para escutar apenas em `127.0.0.1`
-23. Configura Nginx
-24. Configura firewall
-25. Valida a configuração do CKAN
-26. Reinicia serviços
-27. Ativa HTTPS com Certbot, se habilitado
-28. Executa validações finais
+5. Valida segredos obrigatórios
+6. Atualiza a lista de pacotes do sistema
+7. Instala dependências básicas
+8. Instala Docker e Docker Compose plugin
+9. Confere DNS do domínio
+10. Cria a estrutura do projeto Docker em `INSTALL_DIR`
+11. Clona ou atualiza o repositório de customização SFB
+12. Valida a existência de `rootfs`
+13. Semeia `rootfs/etc/ckan` no volume persistente `ckan-config`
+14. Baixa o schema Solr compatível com CKAN 2.10.7
+15. Cria arquivos locais de segredos para o Docker
+16. Gera `.env` sem gravar senhas diretamente
+17. Gera Dockerfile do CKAN
+18. Gera entrypoint do CKAN
+19. Gera Dockerfile do Solr
+20. Gera configuração inicial HTTP do Nginx
+21. Gera `docker-compose.yml`
+22. Configura firewall local
+23. Faz build das imagens
+24. Sobe os containers
+25. Ativa HTTPS com Certbot, se habilitado
+26. Valida configuração, imports, schema, API, domínio, containers e portas
 
 ---
 
-## 12. Logs e backups
+## 15. Logs, backups e arquivos gerados
 
 O script grava logs em:
 
 ```text
-/var/log/ckan-sfb-full-install/
+/var/log/ckan-sfb-docker-install/
 ```
 
 Também cria backups em:
 
 ```text
-/root/ckan-sfb-full-backups/
+/root/ckan-sfb-docker-backups/
+```
+
+O projeto Docker é criado em:
+
+```text
+/opt/ckan-sfb-docker
+```
+
+Dentro dele ficam arquivos como:
+
+```text
+/opt/ckan-sfb-docker/docker-compose.yml
+/opt/ckan-sfb-docker/.env
+/opt/ckan-sfb-docker/ckan-config/
+/opt/ckan-sfb-docker/secrets/
+/opt/ckan-sfb-docker/nginx/default.conf
+/opt/ckan-sfb-docker/letsencrypt/
 ```
 
 Para listar os logs:
@@ -414,7 +580,7 @@ Para listar os logs:
 ```bash
 clear
 echo '===============INÍCIO==============='
-ls -lh /var/log/ckan-sfb-full-install/
+ls -lh /var/log/ckan-sfb-docker-install/
 echo '===============FIM=================='
 ```
 
@@ -423,7 +589,7 @@ Para acompanhar o log mais recente:
 ```bash
 clear
 echo '===============INÍCIO==============='
-tail -f "$(ls -t /var/log/ckan-sfb-full-install/*.log | head -n 1)"
+tail -f "$(ls -t /var/log/ckan-sfb-docker-install/*.log | head -n 1)"
 echo '===============FIM=================='
 ```
 
@@ -432,13 +598,13 @@ Para listar backups:
 ```bash
 clear
 echo '===============INÍCIO==============='
-ls -lh /root/ckan-sfb-full-backups/
+ls -lh /root/ckan-sfb-docker-backups/
 echo '===============FIM=================='
 ```
 
 ---
 
-## 13. Validação após a instalação
+## 16. Validação após a instalação
 
 Ao final, acesse no navegador:
 
@@ -454,22 +620,12 @@ https://custom.ckan.exemplo.gov.br
 
 Também é possível validar pelo terminal.
 
-### Testar API local
+### Testar API via Nginx local
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-curl -fsS http://127.0.0.1:5000/api/3/action/status_show | python3 -m json.tool
-echo '===============FIM=================='
-```
-
-### Testar domínio
-
-```bash
-clear
-echo '===============INÍCIO==============='
-curl -I https://<SEU_DOMINIO>/
-curl -I https://<SEU_DOMINIO>/dataset/
+curl -fsS -H "Host: <SEU_DOMINIO>" http://127.0.0.1/api/3/action/status_show | python3 -m json.tool
 echo '===============FIM=================='
 ```
 
@@ -478,19 +634,50 @@ Exemplo:
 ```bash
 clear
 echo '===============INÍCIO==============='
-curl -I https://custom.ckan.exemplo.gov.br/
-curl -I https://custom.ckan.exemplo.gov.br/dataset/
+curl -fsS -H "Host: custom.ckan.exemplo.gov.br" http://127.0.0.1/api/3/action/status_show | python3 -m json.tool
 echo '===============FIM=================='
 ```
 
-### Conferir serviços
+### Testar domínio HTTPS localmente
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-systemctl status ckan --no-pager
-systemctl status solr --no-pager
-systemctl status nginx --no-pager
+curl -I -k --resolve <SEU_DOMINIO>:443:127.0.0.1 https://<SEU_DOMINIO>/
+curl -I -k --resolve <SEU_DOMINIO>:443:127.0.0.1 https://<SEU_DOMINIO>/dataset/
+echo '===============FIM=================='
+```
+
+Exemplo:
+
+```bash
+clear
+echo '===============INÍCIO==============='
+curl -I -k --resolve custom.ckan.exemplo.gov.br:443:127.0.0.1 https://custom.ckan.exemplo.gov.br/
+curl -I -k --resolve custom.ckan.exemplo.gov.br:443:127.0.0.1 https://custom.ckan.exemplo.gov.br/dataset/
+echo '===============FIM=================='
+```
+
+### Conferir containers
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose ps
+echo '===============FIM=================='
+```
+
+### Conferir logs dos containers
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose logs --tail=120 ckan
+docker compose logs --tail=120 nginx
+docker compose logs --tail=120 db
+docker compose logs --tail=120 solr
 echo '===============FIM=================='
 ```
 
@@ -505,19 +692,23 @@ echo '===============FIM=================='
 
 O esperado é:
 
-- portas `80` e `443` acessíveis publicamente pelo Nginx
-- CKAN em `127.0.0.1:5000`
-- Solr em `127.0.0.1:8983`
-- PostgreSQL e Redis sem exposição pública
+- portas `80` e `443` acessíveis publicamente pelo Nginx;
+- CKAN em `127.0.0.1:5000`, se `PUBLISH_CKAN_LOCAL_PORT="true"`;
+- PostgreSQL, Redis e Solr sem portas públicas expostas no host;
+- banco, Redis e Solr acessíveis apenas pela rede interna Docker.
 
 ---
 
-## 14. Acessar como administrador
+## 17. Acessar como administrador
 
-Use os dados definidos no `.vars`:
+Use os dados definidos nos arquivos:
 
 ```bash
+# install_ckan_sfb_docker_full.vars
 CKAN_SYSADMIN_NAME="..."
+CKAN_SYSADMIN_EMAIL="..."
+
+# install_ckan_sfb_docker_full.secrets
 CKAN_SYSADMIN_PASSWORD="..."
 ```
 
@@ -529,7 +720,71 @@ https://SEU_DOMINIO/user/login
 
 ---
 
-## 15. Problemas comuns
+## 18. Comandos úteis depois da instalação
+
+### Entrar na pasta do projeto Docker
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+pwd
+echo '===============FIM=================='
+```
+
+### Ver containers
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose ps
+echo '===============FIM=================='
+```
+
+### Reiniciar CKAN
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose restart ckan
+echo '===============FIM=================='
+```
+
+### Reiniciar Nginx
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose restart nginx
+echo '===============FIM=================='
+```
+
+### Validar configuração do CKAN
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose exec -T ckan ckan -c /etc/ckan/ckan.ini config validate
+echo '===============FIM=================='
+```
+
+### Reindexar busca
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose exec -T ckan ckan -c /etc/ckan/ckan.ini search-index rebuild
+echo '===============FIM=================='
+```
+
+---
+
+## 19. Problemas comuns
 
 ### Erro: arquivo `.vars` não encontrado
 
@@ -541,9 +796,9 @@ ERRO: arquivo de variáveis não encontrado
 
 Causa provável:
 
-- o arquivo `.vars` não está na mesma pasta do `.sh`
-- o nome do `.vars` não bate com o nome do script
-- o script foi executado de outro local
+- o arquivo `.vars` não está na mesma pasta do `.sh`;
+- o nome do arquivo está diferente de `install_ckan_sfb_docker_full.vars`;
+- o pacote foi copiado incompleto.
 
 Conferir:
 
@@ -551,7 +806,59 @@ Conferir:
 clear
 echo '===============INÍCIO==============='
 pwd
-ls -lh install_ckan_sfb_full.sh install_ckan_sfb_full.vars
+ls -lh \
+  install_ckan_sfb_docker_full.sh \
+  install_ckan_sfb_docker_full.vars \
+  install_ckan_sfb_docker_full.secrets
+echo '===============FIM=================='
+```
+
+---
+
+### Erro: arquivo `.secrets` não encontrado
+
+Mensagem parecida:
+
+```text
+ERRO: arquivo de segredos não encontrado
+```
+
+Causa provável:
+
+- o arquivo `.secrets` não está na mesma pasta do `.sh`;
+- o nome do arquivo está diferente de `install_ckan_sfb_docker_full.secrets`.
+
+Conferir:
+
+```bash
+clear
+echo '===============INÍCIO==============='
+ls -lh install_ckan_sfb_docker_full.secrets
+echo '===============FIM=================='
+```
+
+---
+
+### Erro: placeholder de senha não trocado
+
+Mensagem parecida:
+
+```text
+Troque CKAN_DB_PASSWORD no arquivo .secrets antes de rodar.
+```
+
+Ou:
+
+```text
+Troque CKAN_SYSADMIN_PASSWORD no arquivo .secrets antes de rodar.
+```
+
+Abra o arquivo `.secrets` e troque os valores:
+
+```bash
+clear
+echo '===============INÍCIO==============='
+nano install_ckan_sfb_docker_full.secrets
 echo '===============FIM=================='
 ```
 
@@ -561,10 +868,11 @@ echo '===============FIM=================='
 
 Causas comuns:
 
-- domínio ainda não aponta para o IP da VM
-- porta 80 bloqueada
-- porta 443 bloqueada
-- DNS ainda não propagou
+- domínio ainda não aponta para o IP da VM;
+- porta 80 bloqueada;
+- porta 443 bloqueada;
+- DNS ainda não propagou;
+- `CERTBOT_EMAIL` vazio, caso você queira registrar com e-mail.
 
 Conferir DNS:
 
@@ -584,17 +892,29 @@ ufw status verbose
 echo '===============FIM=================='
 ```
 
----
-
-### CKAN não responde localmente
-
-Conferir serviço:
+Conferir logs do Nginx e Certbot:
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-systemctl status ckan --no-pager
-journalctl -u ckan -n 120 --no-pager
+cd /opt/ckan-sfb-docker
+docker compose logs --tail=120 nginx
+docker compose logs --tail=120 certbot
+echo '===============FIM=================='
+```
+
+---
+
+### CKAN não responde
+
+Conferir containers:
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose ps
+docker compose logs --tail=180 ckan
 echo '===============FIM=================='
 ```
 
@@ -602,14 +922,29 @@ echo '===============FIM=================='
 
 ### Solr não responde
 
-Conferir serviço:
+Conferir o container Solr:
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-systemctl status solr --no-pager
-journalctl -u solr -n 120 --no-pager
-curl -fsS http://127.0.0.1:8983/solr/ckan/admin/ping
+cd /opt/ckan-sfb-docker
+docker compose ps solr
+docker compose logs --tail=180 solr
+echo '===============FIM=================='
+```
+
+---
+
+### Banco não responde
+
+Conferir o container PostgreSQL:
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker
+docker compose ps db
+docker compose logs --tail=180 db
 echo '===============FIM=================='
 ```
 
@@ -617,14 +952,14 @@ echo '===============FIM=================='
 
 ### Nginx não sobe
 
-Testar configuração:
+Testar a configuração dentro do container:
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-nginx -t
-systemctl status nginx --no-pager
-journalctl -u nginx -n 120 --no-pager
+cd /opt/ckan-sfb-docker
+docker compose exec -T nginx nginx -t
+docker compose logs --tail=180 nginx
 echo '===============FIM=================='
 ```
 
@@ -642,38 +977,62 @@ CKAN_RESOURCE_PROXY_MAX_FILE_SIZE_BYTES="314572800"
 NGINX_CLIENT_MAX_BODY_SIZE="300M"
 ```
 
-Depois rode novamente o instalador ou ajuste manualmente os arquivos de configuração.
+Depois rode novamente o instalador ou ajuste manualmente os arquivos gerados em `/opt/ckan-sfb-docker`.
 
 ---
 
-## 16. Reexecutar o instalador
+### Erro informando que `rootfs/etc/ckan` não existe
+
+Causa provável:
+
+- o repositório informado em `GIT_REPO_URL` não contém a estrutura esperada;
+- a branch em `GIT_BRANCH` está errada;
+- o pacote de customização foi reorganizado.
+
+Conferir:
+
+```bash
+clear
+echo '===============INÍCIO==============='
+cd /opt/ckan-sfb-docker/repo/sfb
+pwd
+git status --short
+git log --oneline -1
+find rootfs/etc/ckan -maxdepth 3 -type d | sort | sed -n '1,120p'
+echo '===============FIM=================='
+```
+
+---
+
+## 20. Reexecutar o instalador
 
 O script pode ser executado novamente para reaplicar a instalação/customização.
 
-Antes de reexecutar, confira estas variáveis:
+Antes de reexecutar, confira esta variável no `.vars`:
 
 ```bash
-FORCE_RECREATE_CKAN_DB="false"
-FORCE_RECREATE_SOLR_CORE="false"
-FORCE_OVERWRITE_CKAN_INI="true"
+FORCE_OVERWRITE_PROJECT_DIR="true"
 ```
 
 Atenção:
 
-- `FORCE_RECREATE_CKAN_DB="true"` apaga e recria o banco.
-- `FORCE_RECREATE_SOLR_CORE="true"` recria o core Solr.
-- `FORCE_OVERWRITE_CKAN_INI="true"` recria a configuração principal do CKAN.
+- essa opção permite sobrescrever arquivos do kit Docker em `INSTALL_DIR`;
+- ela não apaga volumes Docker por padrão;
+- os dados persistentes ficam em volumes Docker, como `db_data`, `solr_data`, `redis_data` e `ckan_storage`;
+- mesmo assim, em ambiente com dados reais, faça backup antes de reexecutar.
 
-Em ambiente com dados reais, mantenha:
+Para reexecutar:
 
 ```bash
-FORCE_RECREATE_CKAN_DB="false"
-FORCE_RECREATE_SOLR_CORE="false"
+clear
+echo '===============INÍCIO==============='
+sudo ./install_ckan_sfb_docker_full.sh
+echo '===============FIM=================='
 ```
 
 ---
 
-## 17. Atualizar customizações a partir do Git
+## 21. Atualizar customizações a partir do Git
 
 O script baixa a customização usando:
 
@@ -684,20 +1043,20 @@ GIT_BRANCH="..."
 
 Para aplicar uma versão nova da customização:
 
-1. Atualize o repositório Git.
+1. Atualize o repositório Git de customização.
 2. Confira a branch no `.vars`.
 3. Rode novamente o instalador.
 
 ```bash
 clear
 echo '===============INÍCIO==============='
-sudo ./install_ckan_sfb_full.sh
+sudo ./install_ckan_sfb_docker_full.sh
 echo '===============FIM=================='
 ```
 
 ---
 
-## 18. Resumo rápido da instalação
+## 22. Resumo rápido da instalação
 
 Fluxo completo:
 
@@ -705,11 +1064,12 @@ Fluxo completo:
 1. Criar uma VM Ubuntu 24.04 LTS
 2. Apontar o DNS do domínio para o IP da VM
 3. Clonar este repositório
-4. Editar install_ckan_sfb_full.vars
-5. Dar permissão de execução ao script
-6. Rodar sudo ./install_ckan_sfb_full.sh
-7. Acessar https://SEU_DOMINIO
-8. Entrar com o usuário administrador definido no .vars
+4. Editar install_ckan_sfb_docker_full.vars
+5. Editar install_ckan_sfb_docker_full.secrets
+6. Dar permissão de execução ao script
+7. Rodar sudo ./install_ckan_sfb_docker_full.sh
+8. Acessar https://SEU_DOMINIO
+9. Entrar com o usuário administrador definido no .vars e no .secrets
 ```
 
 Comandos principais:
@@ -720,9 +1080,11 @@ echo '===============INÍCIO==============='
 cd /root
 git clone <URL_DO_REPOSITORIO>
 cd <PASTA_DO_REPOSITORIO>
-nano install_ckan_sfb_full.vars
-chmod 700 install_ckan_sfb_full.sh
-chmod 600 install_ckan_sfb_full.vars
-sudo ./install_ckan_sfb_full.sh
+nano install_ckan_sfb_docker_full.vars
+nano install_ckan_sfb_docker_full.secrets
+chmod 700 install_ckan_sfb_docker_full.sh
+chmod 644 install_ckan_sfb_docker_full.vars
+chmod 600 install_ckan_sfb_docker_full.secrets
+sudo ./install_ckan_sfb_docker_full.sh
 echo '===============FIM=================='
 ```
