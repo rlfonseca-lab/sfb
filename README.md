@@ -1096,3 +1096,11 @@ echo '===============FIM=================='
 A lista dos arquivos incluídos no diretório `rootfs/`, com path e função específica de cada arquivo na customização CKAN SFB, está disponível em:
 
 [`docs/MANIFESTO_ROOTFS.md`](docs/MANIFESTO_ROOTFS.md)
+
+---
+
+## Manifesto dos arquivos do rootfs
+
+A lista dos arquivos incluídos no diretório `rootfs/`, com path e função específica de cada arquivo na customização CKAN SFB, está disponível em:
+
+[`docs/MANIFESTO_ROOTFS.md`](docs/MANIFESTO_ROOTFS.md)
