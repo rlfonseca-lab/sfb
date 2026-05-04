@@ -5,47 +5,8 @@
 > **Documento operacional**
 > Este manual foi preparado para orientar o uso do CKAN SFB pela interface gráfica via navegador. Ele não trata de instalação, Docker, API, banco de dados, plugins, YAML ou customização técnica.
 
-
-| **Campo**           | **Informação**                                                  |
-|---------------------|-----------------------------------------------------------------|
-| Projeto             | CKAN SFB                                                        |
-| Versão do documento | 1.0                                                             |
-| Data de referência  | Maio de 2026                                                    |
-| Abrangência         | Uso pela interface web                                          |
-| Público-alvo        | Consultores, cadastradores, curadoria e administradores visuais |
-
-# Como usar as marcações de figura
-
-Ao longo do manual há caixas verdes com marcações no formato [FIGURA XX]. Cada caixa indica exatamente qual print deve ser capturado no CKAN SFB em funcionamento e inserido naquele ponto do documento.
-
-Recomenda-se tirar os prints depois que a interface estiver homologada, usando o mesmo perfil de usuário indicado na marcação. Quando possível, use dados de teste ou registros fictícios para evitar exposição de informação sensível.
-
-## Como incluir imagens neste Markdown no Git
-
-Sim. Para que as imagens apareçam no Git/GitHub/GitLab, salve os prints dentro do próprio repositório, de preferência na pasta `imagens/`, e referencie cada arquivo com caminho relativo.
-
-Exemplo:
-
-```md
-![Figura 01 - Página inicial do CKAN SFB](imagens/figura-01-pagina-inicial.png)
-```
-
-Boas práticas para o repositório:
-
-- use nomes de arquivo sem espaços e sem acentos;
-- prefira `.png` para prints de tela;
-- mantenha as imagens na mesma pasta do manual ou em uma subpasta `imagens/`;
-- evite caminhos locais como `C:\Users\...` ou `/home/...`, pois eles não funcionam para outros leitores;
-- quando trocar um print, mantenha o mesmo nome de arquivo para evitar quebrar o link no Markdown.
-
-
-> **Padrão dos prints**
-> Use largura suficiente para mostrar menu superior, conteúdo principal e área relevante da tela. Para campos de formulário, capture apenas o bloco necessário, mantendo legibilidade. Evite expor senhas, e-mails pessoais ou dados sigilosos.
-
-
 # Sumário
 
-- Como usar as marcações de figura
 - 1. Apresentação e escopo
 - 2. Conceitos básicos do CKAN SFB
 - 3. Entrar, sair e recuperar acesso
