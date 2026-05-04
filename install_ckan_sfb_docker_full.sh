@@ -112,7 +112,7 @@ write_one_secret_file() {
   umask 077
   printf '%s\n' "${!var_name}" > "$target_file"
   umask "$old_umask"
-  chmod 600 "$target_file"
+  chmod 644 "$target_file"
   echo "OK: segredo preparado para Docker: $target_name"
 }
 
@@ -292,7 +292,8 @@ USER ckan
 
 RUN python -m venv "$CKAN_VENV" \
   && . "$CKAN_VENV/bin/activate" \
-  && pip install --upgrade pip setuptools wheel
+  && pip install --upgrade pip \
+  && pip install "setuptools<82" wheel
 
 RUN git clone --branch "$CKAN_VERSION" "$CKAN_GIT_URL" "$CKAN_SRC" \
   && . "$CKAN_VENV/bin/activate" \
@@ -548,11 +549,16 @@ else
   ckan -c "$CKAN_INI" db init
 fi
 
-log "CRIANDO SYSADMIN"
-ckan -c "$CKAN_INI" sysadmin add "$CKAN_SYSADMIN_NAME" \
+log "CRIANDO USUÁRIO ADMINISTRADOR E MARCANDO COMO SYSADMIN"
+if ckan -c "$CKAN_INI" user add "$CKAN_SYSADMIN_NAME" \
   email="$CKAN_SYSADMIN_EMAIL" \
-  password="$CKAN_SYSADMIN_PASSWORD" || true
+  password="$CKAN_SYSADMIN_PASSWORD"; then
+  echo "OK: usuário administrador criado: $CKAN_SYSADMIN_NAME"
+else
+  echo "AVISO: usuário administrador pode já existir. Tentando marcar como sysadmin."
+fi
 
+ckan -c "$CKAN_INI" sysadmin add "$CKAN_SYSADMIN_NAME"
 ckan -c "$CKAN_INI" sysadmin list || true
 
 log "LIMPANDO CSS CUSTOM DA UI, SE CONFIGURADO"
@@ -757,12 +763,12 @@ services:
       context: .
       dockerfile: ckan/Dockerfile
       args:
-        PYTHON_VERSION: ${PYTHON_VERSION}
-        CKAN_VERSION: ${CKAN_VERSION}
-        CKAN_GIT_URL: ${CKAN_GIT_URL}
-        SCHEMING_GIT_URL: ${SCHEMING_GIT_URL}
-        SCHEMING_GIT_BRANCH: ${SCHEMING_GIT_BRANCH}
-        SFB_EXTS: ${SFB_EXTS}
+        PYTHON_VERSION: "${PYTHON_VERSION}"
+        CKAN_VERSION: "${CKAN_VERSION}"
+        CKAN_GIT_URL: "${CKAN_GIT_URL}"
+        SCHEMING_GIT_URL: "${SCHEMING_GIT_URL}"
+        SCHEMING_GIT_BRANCH: "${SCHEMING_GIT_BRANCH}"
+        SFB_EXTS: "${SFB_EXTS}"
     container_name: ckan_sfb_ckan
     restart: unless-stopped
     env_file:
@@ -998,7 +1004,11 @@ if [[ -d "$REPO_SFB_DIR/rootfs/etc/ckan" ]]; then
     "$REPO_SFB_DIR/rootfs/etc/ckan/" \
     "$CKAN_CONFIG_DIR/"
 
-  echo "OK: arquivos de /etc/ckan semeados no volume Docker."
+  echo "OK: arquivos de /etc/ckan semeados no volume Docker."\necho "Ajustando permissões do ckan-config para o usuário interno do container CKAN..."
+chown -R 1000:1000 "$CKAN_CONFIG_DIR"
+find "$CKAN_CONFIG_DIR" -type d -exec chmod 755 {} \;
+find "$CKAN_CONFIG_DIR" -type f -exec chmod 644 {} \;
+
 else
   fail "rootfs/etc/ckan não encontrado em: $REPO_SFB_DIR/rootfs/etc/ckan"
 fi
@@ -1088,7 +1098,17 @@ if [[ "${ENABLE_HTTPS,,}" == "true" ]]; then
   write_nginx_https_conf
 
   docker compose exec -T nginx nginx -t
-  docker compose exec -T nginx nginx -s reload
+
+  echo "Reiniciando Nginx para renovar resolução do upstream CKAN..."
+  docker compose restart nginx
+
+  for i in $(seq 1 30); do
+    if docker compose exec -T nginx nginx -t >/dev/null 2>&1; then
+      echo "OK: Nginx reiniciado e configuração válida."
+      break
+    fi
+    sleep 2
+  done
 
   install_certbot_cron
 else
@@ -1116,7 +1136,58 @@ print("dataset_fields =", len(schema.get("dataset_fields", [])))
 PY
 
 step 23 "VALIDANDO API LOCAL"
-curl -fsS -H "Host: ${DOMAIN}" "http://127.0.0.1/api/3/action/status_show" | python3 -m json.tool | sed -n '1,120p'
+API_TMP="$(mktemp)"
+
+cleanup_api_tmp() {
+  rm -f "$API_TMP"
+}
+trap cleanup_api_tmp EXIT
+
+if [[ "${ENABLE_HTTPS,,}" == "true" ]]; then
+  echo "HTTPS ativo: aguardando API local via domínio com --resolve..."
+  for i in $(seq 1 90); do
+    if curl -k -fsS --max-time 10 \
+      --resolve "${DOMAIN}:443:127.0.0.1" \
+      "https://${DOMAIN}/api/3/action/status_show" > "$API_TMP"; then
+      if python3 -m json.tool "$API_TMP" | sed -n '1,120p'; then
+        echo "OK: API local HTTPS respondeu com JSON válido."
+        break
+      fi
+    fi
+
+    if [[ "$i" -eq 90 ]]; then
+      echo "ERRO: API local HTTPS não respondeu com JSON válido após 90 tentativas."
+      echo "--- Última resposta capturada, se houver:"
+      cat "$API_TMP" || true
+      exit 1
+    fi
+
+    echo "Aguardando API local HTTPS... tentativa $i/90"
+    sleep 2
+  done
+else
+  echo "HTTPS desativado: aguardando API local via HTTP..."
+  for i in $(seq 1 90); do
+    if curl -fsS --max-time 10 \
+      -H "Host: ${DOMAIN}" \
+      "http://127.0.0.1/api/3/action/status_show" > "$API_TMP"; then
+      if python3 -m json.tool "$API_TMP" | sed -n '1,120p'; then
+        echo "OK: API local HTTP respondeu com JSON válido."
+        break
+      fi
+    fi
+
+    if [[ "$i" -eq 90 ]]; then
+      echo "ERRO: API local HTTP não respondeu com JSON válido após 90 tentativas."
+      echo "--- Última resposta capturada, se houver:"
+      cat "$API_TMP" || true
+      exit 1
+    fi
+
+    echo "Aguardando API local HTTP... tentativa $i/90"
+    sleep 2
+  done
+fi
 
 step 24 "VALIDANDO DOMÍNIO"
 if [[ "${ENABLE_HTTPS,,}" == "true" ]]; then
