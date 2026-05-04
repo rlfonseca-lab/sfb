@@ -63,7 +63,7 @@ nano install_ckan_sfb_docker_full.secrets # Preencha as senhas e outros parâmet
 chmod 700 install_ckan_sfb_docker_full.sh
 chmod 644 install_ckan_sfb_docker_full.vars
 chmod 600 install_ckan_sfb_docker_full.secrets
-sudo ./install_ckan_sfb_docker_full.sho
+sudo ./install_ckan_sfb_docker_full.sh
 ```
 
 ---
