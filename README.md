@@ -110,7 +110,7 @@ Para instalação com HTTPS, o domínio precisa apontar para o IP público do se
 Exemplo:
 
 ```text
-custom.ckan.exemplo.gov.br -> IP_PUBLICO_DA_VM
+custom.ckan.exemplo.br -> IP_PUBLICO_DA_VM
 ```
 
 Se o domínio ainda não estiver apontando corretamente, o Certbot não conseguirá emitir o certificado HTTPS.
@@ -227,9 +227,9 @@ echo '===============FIM=================='
 Atenção especial para estes campos:
 
 ```bash
-DOMAIN="custom.ckan.exemplo.gov.br"
+DOMAIN="custom.ckan.exemplo.br"
 ENABLE_HTTPS="true"
-CERTBOT_EMAIL="email@exemplo.gov.br"
+CERTBOT_EMAIL="email@exemplo.br"
 EXPECTED_DNS_IP="IP_PUBLICO_DA_VM"
 ```
 
@@ -493,7 +493,7 @@ Exemplo:
 ```bash
 clear
 echo '===============INÍCIO==============='
-dig +short custom.ckan.exemplo.gov.br
+dig +short custom.ckan.exemplo.br
 echo '===============FIM=================='
 ```
 
@@ -647,7 +647,7 @@ https://SEU_DOMINIO
 Exemplo:
 
 ```text
-https://custom.ckan.exemplo.gov.br
+https://custom.ckan.exemplo.br
 ```
 
 Também é possível validar pelo terminal.
@@ -666,7 +666,7 @@ Exemplo:
 ```bash
 clear
 echo '===============INÍCIO==============='
-curl -fsS -H "Host: custom.ckan.exemplo.gov.br" http://127.0.0.1/api/3/action/status_show | python3 -m json.tool
+curl -fsS -H "Host: custom.ckan.exemplo.br" http://127.0.0.1/api/3/action/status_show | python3 -m json.tool
 echo '===============FIM=================='
 ```
 
@@ -685,8 +685,8 @@ Exemplo:
 ```bash
 clear
 echo '===============INÍCIO==============='
-curl -I -k --resolve custom.ckan.exemplo.gov.br:443:127.0.0.1 https://custom.ckan.exemplo.gov.br/
-curl -I -k --resolve custom.ckan.exemplo.gov.br:443:127.0.0.1 https://custom.ckan.exemplo.gov.br/dataset/
+curl -I -k --resolve custom.ckan.exemplo.br:443:127.0.0.1 https://custom.ckan.exemplo.br/
+curl -I -k --resolve custom.ckan.exemplo.br:443:127.0.0.1 https://custom.ckan.exemplo.br/dataset/
 echo '===============FIM=================='
 ```
 
