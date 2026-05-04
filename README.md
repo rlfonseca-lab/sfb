@@ -122,23 +122,21 @@ Se o domínio ainda não estiver apontando corretamente, o Certbot não consegui
 Acesse a VM via SSH e clone este repositório.
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /root
 git clone <URL_DO_REPOSITORIO>
 cd <PASTA_DO_REPOSITORIO>
-echo '===============FIM=================='
+
 ```
 
 Exemplo:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /root
 git clone https://github.com/usuario/repositorio_sfb.git
 cd repositorio_sfb
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -148,13 +146,12 @@ echo '===============FIM=================='
 Dentro da pasta do repositório, confira se os três arquivos existem:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 ls -lh \
   install_ckan_sfb_docker_full.sh \
   install_ckan_sfb_docker_full.vars \
   install_ckan_sfb_docker_full.secrets
-echo '===============FIM=================='
+
 ```
 
 Resultado esperado:
@@ -168,11 +165,10 @@ install_ckan_sfb_docker_full.secrets
 Também é importante confirmar que o repositório contém a pasta `rootfs`, pois é dela que vêm as customizações do SFB.
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 ls -ld rootfs
 find rootfs -maxdepth 3 -type d | sort | sed -n '1,80p'
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -193,10 +189,9 @@ echo '===============FIM=================='
 O script deve ser executado sem parâmetros:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 sudo ./install_ckan_sfb_docker_full.sh
-echo '===============FIM=================='
+
 ```
 
 ### `install_ckan_sfb_docker_full.vars`
@@ -218,10 +213,9 @@ Esse arquivo vai junto no Git como modelo editável para o cliente, mas no repos
 Antes de rodar a instalação, edite o arquivo de variáveis:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 nano install_ckan_sfb_docker_full.vars
-echo '===============FIM=================='
+
 ```
 
 Atenção especial para estes campos:
@@ -253,10 +247,9 @@ GIT_BRANCH="main"
 Agora edite o arquivo de segredos:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 nano install_ckan_sfb_docker_full.secrets
-echo '===============FIM=================='
+
 ```
 
 Troque obrigatoriamente os placeholders:
@@ -482,19 +475,17 @@ rootfs/usr/lib/ckan/venv/src/ckanext-sfbgroups
 Antes de ativar HTTPS, confira se o domínio aponta para o IP da VM.
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 dig +short <SEU_DOMINIO>
-echo '===============FIM=================='
+
 ```
 
 Exemplo:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 dig +short custom.ckan.exemplo.br
-echo '===============FIM=================='
+
 ```
 
 O resultado deve mostrar o IP público da VM.
@@ -508,12 +499,11 @@ Se não mostrar, ajuste o DNS antes de continuar.
 Depois de editar o `.vars` e o `.secrets`, ajuste as permissões:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 chmod 700 install_ckan_sfb_docker_full.sh
 chmod 644 install_ckan_sfb_docker_full.vars
 chmod 600 install_ckan_sfb_docker_full.secrets
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -523,10 +513,9 @@ echo '===============FIM=================='
 Execute o script como `root` ou com `sudo`:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 sudo ./install_ckan_sfb_docker_full.sh
-echo '===============FIM=================='
+
 ```
 
 O script exibirá várias etapas no terminal.
@@ -610,28 +599,25 @@ Dentro dele ficam arquivos como:
 Para listar os logs:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 ls -lh /var/log/ckan-sfb-docker-install/
-echo '===============FIM=================='
+
 ```
 
 Para acompanhar o log mais recente:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 tail -f "$(ls -t /var/log/ckan-sfb-docker-install/*.log | head -n 1)"
-echo '===============FIM=================='
+
 ```
 
 Para listar backups:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 ls -lh /root/ckan-sfb-docker-backups/
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -655,71 +641,64 @@ Também é possível validar pelo terminal.
 ### Testar API via Nginx local
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 curl -fsS -H "Host: <SEU_DOMINIO>" http://127.0.0.1/api/3/action/status_show | python3 -m json.tool
-echo '===============FIM=================='
+
 ```
 
 Exemplo:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 curl -fsS -H "Host: custom.ckan.exemplo.br" http://127.0.0.1/api/3/action/status_show | python3 -m json.tool
-echo '===============FIM=================='
+
 ```
 
 ### Testar domínio HTTPS localmente
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 curl -I -k --resolve <SEU_DOMINIO>:443:127.0.0.1 https://<SEU_DOMINIO>/
 curl -I -k --resolve <SEU_DOMINIO>:443:127.0.0.1 https://<SEU_DOMINIO>/dataset/
-echo '===============FIM=================='
+
 ```
 
 Exemplo:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 curl -I -k --resolve custom.ckan.exemplo.br:443:127.0.0.1 https://custom.ckan.exemplo.br/
 curl -I -k --resolve custom.ckan.exemplo.br:443:127.0.0.1 https://custom.ckan.exemplo.br/dataset/
-echo '===============FIM=================='
+
 ```
 
 ### Conferir containers
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose ps
-echo '===============FIM=================='
+
 ```
 
 ### Conferir logs dos containers
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose logs --tail=120 ckan
 docker compose logs --tail=120 nginx
 docker compose logs --tail=120 db
 docker compose logs --tail=120 solr
-echo '===============FIM=================='
+
 ```
 
 ### Conferir portas abertas
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 ss -lntp | grep -E ':(80|443|5000|8983|5432|6379)\b' || true
-echo '===============FIM=================='
+
 ```
 
 O esperado é:
@@ -757,61 +736,55 @@ https://SEU_DOMINIO/user/login
 ### Entrar na pasta do projeto Docker
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 pwd
-echo '===============FIM=================='
+
 ```
 
 ### Ver containers
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose ps
-echo '===============FIM=================='
+
 ```
 
 ### Reiniciar CKAN
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose restart ckan
-echo '===============FIM=================='
+
 ```
 
 ### Reiniciar Nginx
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose restart nginx
-echo '===============FIM=================='
+
 ```
 
 ### Validar configuração do CKAN
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose exec -T ckan ckan -c /etc/ckan/ckan.ini config validate
-echo '===============FIM=================='
+
 ```
 
 ### Reindexar busca
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose exec -T ckan ckan -c /etc/ckan/ckan.ini search-index rebuild
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -835,14 +808,13 @@ Causa provável:
 Conferir:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 pwd
 ls -lh \
   install_ckan_sfb_docker_full.sh \
   install_ckan_sfb_docker_full.vars \
   install_ckan_sfb_docker_full.secrets
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -863,10 +835,9 @@ Causa provável:
 Conferir:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 ls -lh install_ckan_sfb_docker_full.secrets
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -888,10 +859,9 @@ Troque CKAN_SYSADMIN_PASSWORD no arquivo .secrets antes de rodar.
 Abra o arquivo `.secrets` e troque os valores:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 nano install_ckan_sfb_docker_full.secrets
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -909,30 +879,27 @@ Causas comuns:
 Conferir DNS:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 dig +short <SEU_DOMINIO>
-echo '===============FIM=================='
+
 ```
 
 Conferir firewall:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 ufw status verbose
-echo '===============FIM=================='
+
 ```
 
 Conferir logs do Nginx e Certbot:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose logs --tail=120 nginx
 docker compose logs --tail=120 certbot
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -942,12 +909,11 @@ echo '===============FIM=================='
 Conferir containers:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose ps
 docker compose logs --tail=180 ckan
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -957,12 +923,11 @@ echo '===============FIM=================='
 Conferir o container Solr:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose ps solr
 docker compose logs --tail=180 solr
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -972,12 +937,11 @@ echo '===============FIM=================='
 Conferir o container PostgreSQL:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose ps db
 docker compose logs --tail=180 db
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -987,12 +951,11 @@ echo '===============FIM=================='
 Testar a configuração dentro do container:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker
 docker compose exec -T nginx nginx -t
 docker compose logs --tail=180 nginx
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -1024,14 +987,13 @@ Causa provável:
 Conferir:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 cd /opt/ckan-sfb-docker/repo/sfb
 pwd
 git status --short
 git log --oneline -1
 find rootfs/etc/ckan -maxdepth 3 -type d | sort | sed -n '1,120p'
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -1056,10 +1018,9 @@ Atenção:
 Para reexecutar:
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 sudo ./install_ckan_sfb_docker_full.sh
-echo '===============FIM=================='
+
 ```
 
 ---
@@ -1080,10 +1041,9 @@ Para aplicar uma versão nova da customização:
 3. Rode novamente o instalador.
 
 ```bash
-clear
-echo '===============INÍCIO==============='
+
 sudo ./install_ckan_sfb_docker_full.sh
-echo '===============FIM=================='
+
 ```
 
 ## Manifesto dos arquivos do rootfs
