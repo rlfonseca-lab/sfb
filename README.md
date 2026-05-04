@@ -36,6 +36,38 @@ Os três arquivos devem ficar na mesma pasta. O script **não recebe parâmetros
 
 ---
 
+## 0. Resumo rápido da instalação
+
+Fluxo completo:
+
+```text
+1. Criar uma VM Ubuntu 24.04 LTS
+2. Apontar o DNS do domínio para o IP da VM
+3. Clonar este repositório
+4. Editar install_ckan_sfb_docker_full.vars
+5. Editar install_ckan_sfb_docker_full.secrets
+6. Dar permissão de execução ao script
+7. Rodar sudo ./install_ckan_sfb_docker_full.sh
+8. Acessar https://SEU_DOMINIO
+9. Entrar com o usuário administrador definido no .vars e no .secrets
+```
+
+Comandos principais:
+
+```bash
+cd /root
+git clone https://github.com/rlfonseca-lab/sfb.git
+cd sfb
+nano install_ckan_sfb_docker_full.vars # Preencha os parâmetros gerais de instalação
+nano install_ckan_sfb_docker_full.secrets # Preencha as senhas e outros parâmetros sensíveis de instalação
+chmod 700 install_ckan_sfb_docker_full.sh
+chmod 644 install_ckan_sfb_docker_full.vars
+chmod 600 install_ckan_sfb_docker_full.secrets
+sudo ./install_ckan_sfb_docker_full.sho
+```
+
+---
+
 ## 1. Quando usar este instalador
 
 Use este instalador para uma instalação nova do CKAN SFB em uma máquina limpa.
@@ -1053,43 +1085,6 @@ echo '===============INÍCIO==============='
 sudo ./install_ckan_sfb_docker_full.sh
 echo '===============FIM=================='
 ```
-
----
-
-## 22. Resumo rápido da instalação
-
-Fluxo completo:
-
-```text
-1. Criar uma VM Ubuntu 24.04 LTS
-2. Apontar o DNS do domínio para o IP da VM
-3. Clonar este repositório
-4. Editar install_ckan_sfb_docker_full.vars
-5. Editar install_ckan_sfb_docker_full.secrets
-6. Dar permissão de execução ao script
-7. Rodar sudo ./install_ckan_sfb_docker_full.sh
-8. Acessar https://SEU_DOMINIO
-9. Entrar com o usuário administrador definido no .vars e no .secrets
-```
-
-Comandos principais:
-
-```bash
-clear
-echo '===============INÍCIO==============='
-cd /root
-git clone <URL_DO_REPOSITORIO>
-cd <PASTA_DO_REPOSITORIO>
-nano install_ckan_sfb_docker_full.vars
-nano install_ckan_sfb_docker_full.secrets
-chmod 700 install_ckan_sfb_docker_full.sh
-chmod 644 install_ckan_sfb_docker_full.vars
-chmod 600 install_ckan_sfb_docker_full.secrets
-sudo ./install_ckan_sfb_docker_full.sh
-echo '===============FIM=================='
-```
-
----
 
 ## Manifesto dos arquivos do rootfs
 
