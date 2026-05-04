@@ -1088,3 +1088,11 @@ chmod 600 install_ckan_sfb_docker_full.secrets
 sudo ./install_ckan_sfb_docker_full.sh
 echo '===============FIM=================='
 ```
+
+---
+
+## Manifesto dos arquivos do rootfs
+
+A lista dos arquivos incluídos no diretório `rootfs/`, com path e função específica de cada arquivo na customização CKAN SFB, está disponível em:
+
+[`docs/MANIFESTO_ROOTFS.md`](docs/MANIFESTO_ROOTFS.md)
