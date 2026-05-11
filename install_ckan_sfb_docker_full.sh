@@ -4,7 +4,7 @@ umask 022
 
 # ============================================================
 # SCRIPT ÚNICO: CKAN SFB FULL EM DOCKER
-# CKAN 2.10.7 EXATO + PostgreSQL + Redis + Solr + Nginx + Certbot
+# CKAN 2.10.7 EXATO + PostgreSQL + Redis + Solr + Nginx + Certbot 
 # ============================================================
 
 SCRIPT_PATH="$(readlink -f "$0")"
